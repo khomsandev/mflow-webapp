@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ตั้งค่าฟอนต์สำหรับทั้งเว็บ */
+body {
+  font-family: 'Kanit', sans-serif;
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-progress {
+  animation: progress 1.5s linear infinite;
+}

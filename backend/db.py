@@ -1,0 +1,364 @@
+import os
+import oracledb
+from dotenv import load_dotenv
+
+# โหลด .env ที่อยู่ระดับโฟลเดอร์โปรเจกต์ (สมมติว่า .env อยู่ข้างนอกโฟลเดอร์ backend)
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
+
+def get_connection():
+    # พิมพ์ค่า env เพื่อเช็คว่าถูกโหลดจริงไหม
+    # print("USER:", os.getenv("ORA_USER"))
+    # print("PASSWORD:", os.getenv("ORA_PASSWORD"))
+    # print("DSN:", os.getenv("ORA_DSN"))
+
+    return oracledb.connect(
+        user=os.getenv("ORA_USER"),
+        password=os.getenv("ORA_PASSWORD"),
+        dsn=os.getenv("ORA_DSN")
+    )
+
+# ✅ฟังก์ชันดึงข้อมูลจังหวัดทั้งหมดจากตาราง CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE
+def get_all_provinces():
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+    
+        query = "SELECT CODE, DESCRIPTION, DESCRIPTION_EN, ID FROM CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE ORDER BY ID ASC"
+        cursor.execute(query)
+
+        provinces = []
+        for row in cursor:
+            # เก็บข้อมูลในรูปแบบ { "code": "TH-XX", "name": "ชื่อจังหวัด" }
+            provinces.append({"code": row[0], "name": row[1]})
+        return provinces
+    except Exception as e:
+        print(f"เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัดจากฐานข้อมูล: {e}")
+        raise
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ✅ ฟังก์ชันตรวจสอบการชำระเงิน
+def get_db_data_by_ref_and_date(ref, date_str):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if len(ref) == 4:
+        query = """
+		WITH CombinedData AS (
+        SELECT 
+            A.CREATE_DATE, C.TRANSACTION_DATE,
+            B.PLATE1 || ' ' || B.PLATE2 || ' ' || V.DESCRIPTION AS LICENSE,
+            B.PAYMENT_DATE, A.REF_GROUP_INVOICE, A.INVOICE_NO,
+            B.FEE_AMOUNT, B.FINE_AMOUNT, B.TOTAL_AMOUNT, B.STATUS
+        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER_LOG_REF_GROUP_INVOICE A
+        JOIN INVOICE_SERVICE.MF_INVOICE_NONMEMBER B ON A.INVOICE_NO = B.INVOICE_NO
+        JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER C ON B.INVOICE_NO = C.INVOICE_NO
+        JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON B.PROVINCE = V.CODE
+        UNION ALL
+        SELECT 
+            A.CREATE_DATE, C.TRANSACTION_DATE,
+            B.PLATE1 || ' ' || B.PLATE2 || ' ' || V.DESCRIPTION AS LICENSE,
+            B.PAYMENT_DATE, A.REF_GROUP_INVOICE, A.INVOICE_NO,
+            B.FEE_AMOUNT, B.COLLECTION_AMOUNT, B.TOTAL_AMOUNT, B.STATUS
+        FROM INVOICE_SERVICE.MF_INVOICE_LOG_REF_GROUP_INVOICE A
+        JOIN INVOICE_SERVICE.MF_INVOICE B ON A.INVOICE_NO = B.INVOICE_NO
+        JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL C ON B.INVOICE_NO = C.INVOICE_NO
+        JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON B.PROVINCE = V.CODE
+        )
+        SELECT *
+        FROM CombinedData
+        WHERE SUBSTR(REF_GROUP_INVOICE, -4) = :ref_group
+        AND TRUNC(CREATE_DATE) = TO_DATE(:pay_date, 'YYYY-MM-DD')
+        ORDER BY COMBINEDDATA.TRANSACTION_DATE DESC
+        """
+    else:
+        query = """
+		WITH CombinedData AS (
+        SELECT 
+            A.CREATE_DATE, C.TRANSACTION_DATE,
+            B.PLATE1 || ' ' || B.PLATE2 || ' ' || V.DESCRIPTION AS LICENSE,
+            B.PAYMENT_DATE, A.REF_GROUP_INVOICE, A.INVOICE_NO,
+            B.FEE_AMOUNT, B.FINE_AMOUNT, B.TOTAL_AMOUNT, B.STATUS
+        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER_LOG_REF_GROUP_INVOICE A
+        JOIN INVOICE_SERVICE.MF_INVOICE_NONMEMBER B ON A.INVOICE_NO = B.INVOICE_NO
+        JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER C ON B.INVOICE_NO = C.INVOICE_NO
+        JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON B.PROVINCE = V.CODE
+        UNION ALL
+        SELECT 
+            A.CREATE_DATE, C.TRANSACTION_DATE,
+            B.PLATE1 || ' ' || B.PLATE2 || ' ' || V.DESCRIPTION AS LICENSE,
+            B.PAYMENT_DATE, A.REF_GROUP_INVOICE, A.INVOICE_NO,
+            B.FEE_AMOUNT, B.COLLECTION_AMOUNT, B.TOTAL_AMOUNT, B.STATUS
+        FROM INVOICE_SERVICE.MF_INVOICE_LOG_REF_GROUP_INVOICE A
+        JOIN INVOICE_SERVICE.MF_INVOICE B ON A.INVOICE_NO = B.INVOICE_NO
+        JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL C ON B.INVOICE_NO = C.INVOICE_NO
+        JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON B.PROVINCE = V.CODE
+        )
+        SELECT *
+        FROM CombinedData
+        WHERE TRIM(REF_GROUP_INVOICE) = :ref_group
+        AND TRUNC(CREATE_DATE) = TO_DATE(:pay_date, 'YYYY-MM-DD')
+        ORDER BY COMBINEDDATA.TRANSACTION_DATE DESC
+        """
+    cursor.execute(query, {"ref_group": ref, "pay_date": date_str})
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+# ✅ ฟังก์ชันค้นหา Car Balance
+def get_car_balance_by_customer_id(customer_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT
+            ma.FULL_NAME AS COMPANY_NAME, 
+            TO_CHAR(mcvi.CREATE_DATE, 'DD/MM/YYYY') AS DATE_CREATE,
+            TO_CHAR(mcvi.CREATE_DATE, 'HH24:MI:SS') AS TIME_CREATE,
+            mcvi.PLATE1, 
+            mcvi.PLATE2, 
+            mcmvo.DESCRIPTION AS PROVINCE,
+            CASE 
+                WHEN mcvi.DELETE_FLAG = 1 OR mcvi.DRAFT_FLAG = 1 THEN 'INACTIVE'
+                WHEN mcvi.DELETE_FLAG = 0 THEN 'ACTIVE'
+            END AS STATUS,
+            mcvi.CREATE_BY,
+            mcvi.CREATE_BY_ID,
+            TO_CHAR(mcvi.UPDATE_DATE, 'DD/MM/YYYY') AS DATE_UPDATE,
+            TO_CHAR(mcvi.UPDATE_DATE, 'HH24:MI:SS') AS TIME_UPDATE,
+            mcvi.UPDATE_BY,
+            mcvi.UPDATE_BY_ID 
+        FROM CUSTOMER_SERVICE.MF_CUST_VEHICLE_INFO mcvi 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE mcmvo ON mcvi.PROVINCE = mcmvo.CODE
+        LEFT JOIN AUTH_SERVICE.MF_AUTHENTICATION ma ON ma.ACCOUNT_ID = mcvi.CUSTOMER_ID
+        WHERE mcvi.CUSTOMER_ID = :customer_id
+          AND mcvi.DELETE_FLAG = 0  
+        ORDER BY 
+            mcvi.PLATE1, 
+            mcvi.PLATE2, 
+            mcmvo.DESCRIPTION,
+            mcvi.CREATE_DATE
+    """
+    cursor.execute(query, {"customer_id": customer_id})
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+# ✅ ฟังก์ชันค้นหา SumTransection
+def get_summary_by_customer_id_and_date(customer_id, start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT 
+            a.FULL_NAME AS company_name, TO_CHAR(b.TRANSACTION_DATE,'DD/MM/YYYY') AS tran_date, TO_CHAR(b.TRANSACTION_DATE,'HH24:MI:SS') AS tran_time,
+            mcmp2.NAME AS PLAZA, mcml.NAME AS LANE, b.PLATE1 , b.PLATE2, mcmvo2.DESCRIPTION AS PROVINCE, 
+            CASE 
+                WHEN a.INVOICE_TYPE = 0 THEN 'ค่าผ่านทาง' 
+                WHEN a.INVOICE_TYPE = 1 THEN 'ค่าผ่านทาง+ค่าปรับ'
+            END AS TYPE_INV,
+            b.TOTAL_AMOUNT, a.TOTAL_AMOUNT AS bill_AMOUNT, a.INVOICE_NO, 
+            CASE 
+                WHEN a.INVOICE_CHANNEL = 'BILL_TIME' THEN 'รายครั้ง'
+                WHEN a.INVOICE_CHANNEL = 'BILL_CYCLE' THEN 'รายรอบบิล'
+            END AS INVOICE_CHANNEL, 
+            a.STATUS, TO_CHAR(a.CREATE_DATE,'DD/MM/YYYY') AS INV_DATE, TO_CHAR(a.CREATE_DATE,'HH24:MI:SS') AS INV_TIME,
+            TO_CHAR(a.PAYMENT_DATE,'DD/MM/YYYY') AS PAYMENT_DATE, TO_CHAR(a.PAYMENT_DATE,'HH24:MI:SS') AS PAYMENT_TIME,
+            a.RECEIPT_NO, a.RECEIPT_FILE_ID, a.REF_GROUP
+        FROM INVOICE_SERVICE.MF_INVOICE a 
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA mcmp2 ON mcmp2.CODE  = b.PLAZA_CODE
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_LANE mcml ON mcml.CODE = b.LANE_CODE
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE mcmvo2 ON mcmvo2.CODE = b.PROVINCE
+        WHERE a.CUSTOMER_ID = :customer_id 
+          AND a.DELETE_FLAG = 0 
+          AND b.DELETE_FLAG = 0 
+          AND a.INVOICE_TYPE IN (0,1)
+          AND TO_CHAR(b.TRANSACTION_DATE ,'YYYY-MM-DD') >= :start_date
+          AND TO_CHAR(b.TRANSACTION_DATE ,'YYYY-MM-DD') <= :end_date
+        ORDER BY b.PLATE1, b.PLATE2, b.PROVINCE, b.TRANSACTION_DATE
+    """
+    cursor.execute(query, {
+        "customer_id": customer_id,
+        "start_date": start_date,
+        "end_date": end_date
+    })
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+# ✅ ฟังก์ชันค้นหา Invoice Member
+def search_member_invoices(plate1, plate2, province, invoice_no, status, start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.DISCOUNT, a.TOTAL_AMOUNT
+        FROM INVOICE_SERVICE.MF_INVOICE a
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
+        WHERE a.DELETE_FLAG = 0
+          AND a.FEE_AMOUNT > 0
+          AND a.INVOICE_TYPE != '3'
+    """
+    params = {}
+    if plate1:
+        query += " AND a.PLATE1 = :plate1"
+        params["plate1"] = plate1.strip()
+    if plate2:
+        query += " AND a.PLATE2 = :plate2"
+        params["plate2"] = plate2.strip()
+    if province:
+        query += " AND a.PROVINCE = :province"
+        params["province"] = province.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
+    if status:
+        query += " AND a.STATUS = :status"
+        params["status"] = status.strip()
+    if start_date and end_date:
+        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
+        params["start_date"] = start_date.strip()
+        params["end_date"] = end_date.strip()
+
+    query += " ORDER BY b.TRANSACTION_DATE DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+# ✅ ฟังก์ชันค้นหา Invoice NonMember
+def search_nonmember_invoices(plate1, plate2, province, invoice_no, status, start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.DISCOUNT, a.TOTAL_AMOUNT
+        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER a
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER b ON a.INVOICE_NO = b.INVOICE_NO
+        WHERE a.DELETE_FLAG = 0
+          AND a.FEE_AMOUNT > 0
+          AND a.INVOICE_TYPE != '3'
+    """
+
+    params = {}
+    if plate1:
+        query += " AND a.PLATE1 = :plate1"
+        params["plate1"] = plate1.strip()
+    if plate2:
+        query += " AND a.PLATE2 = :plate2"
+        params["plate2"] = plate2.strip()
+    if province:
+        query += " AND a.PROVINCE = :province"
+        params["province"] = province.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
+    if status:
+        query += " AND a.STATUS = :status"
+        params["status"] = status.strip()
+    if start_date and end_date:
+        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
+        params["start_date"] = start_date.strip()
+        params["end_date"] = end_date.strip()
+
+    query += " ORDER BY b.TRANSACTION_DATE DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+
+# ✅ ฟังก์ชันค้นหาใบเสร็จรับเงิน Member
+def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT a.RECEIPT_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.DISCOUNT, a.TOTAL_AMOUNT
+        FROM INVOICE_SERVICE.MF_INVOICE a
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
+        WHERE a.DELETE_FLAG = 0
+            AND a.FEE_AMOUNT > 0
+            AND a.INVOICE_TYPE != '3'
+            AND a.STATUS = 'PAYMENT_SUCCESS'
+    """
+    params = {}
+    if plate1:
+        query += " AND a.PLATE1 = :plate1"
+        params["plate1"] = plate1.strip()
+    if plate2:
+        query += " AND a.PLATE2 = :plate2"
+        params["plate2"] = plate2.strip()
+    if province:
+        query += " AND a.PROVINCE = :province"
+        params["province"] = province.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
+    if start_date and end_date:
+        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
+        params["start_date"] = start_date.strip()
+        params["end_date"] = end_date.strip()
+
+    query += " ORDER BY b.TRANSACTION_DATE DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
+# ✅ ฟังก์ชันค้นหาใบเสร็จรับเงิน NonMember
+def search_nonmember_receipt(plate1, plate2, province, invoice_no, start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT a.RECEIPT_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.DISCOUNT, a.TOTAL_AMOUNT
+        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER a
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER b ON a.INVOICE_NO = b.INVOICE_NO
+        WHERE a.DELETE_FLAG = 0
+            AND a.FEE_AMOUNT > 0
+            AND a.INVOICE_TYPE != '3'
+            AND a.STATUS = 'PAYMENT_SUCCESS'
+    """
+    params = {}
+    if plate1:
+        query += " AND a.PLATE1 = :plate1"
+        params["plate1"] = plate1.strip()
+    if plate2:
+        query += " AND a.PLATE2 = :plate2"
+        params["plate2"] = plate2.strip()
+    if province:
+        query += " AND a.PROVINCE = :province"
+        params["province"] = province.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
+    if start_date and end_date:
+        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
+        params["start_date"] = start_date.strip()
+        params["end_date"] = end_date.strip()
+
+    query += " ORDER BY b.TRANSACTION_DATE DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+    return [dict(zip(columns, row)) for row in rows]
+
