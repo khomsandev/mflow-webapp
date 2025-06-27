@@ -101,14 +101,6 @@ export default function InvoiceSearchMemberPage() {
               </>
             )}
           </select>
-
-          {/* <input
-            type="text"
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            placeholder="จังหวัด (รหัส เช่น TH-10)"
-            className="p-2 border rounded"
-          /> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-1 gap-2 mb-4">
