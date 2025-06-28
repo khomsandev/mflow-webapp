@@ -8,6 +8,8 @@ from db import search_member_invoices, search_nonmember_invoices
 from db import get_all_provinces
 from db import search_member_receipt
 from db import search_nonmember_receipt
+from db import get_tran_member
+from db import get_tran_nonmember
 from typing import Optional, List, Dict
 import io, os, zipfile, requests
 
@@ -168,4 +170,31 @@ def search_receipt(
 
     except Exception as e:
         print("❌ Invoice Search API Error:", e)
+        return {"error": str(e)}
+    
+@app.get("/search-tran")
+def search_tran(
+    member_type: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    plate1: Optional[str] = None,
+    plate2: Optional[str] = None,
+    province: Optional[str] = None,
+    status: Optional[str] = None,
+    plaza: Optional[str] = None,
+):
+    try:
+        member_type_upper = member_type.strip().upper()
+
+        if member_type_upper == "MEMBER":
+            result = get_tran_member(start_date, end_date, plate1, plate2, province, status, plaza)
+        elif member_type_upper == "NONMEMBER":
+            result = get_tran_nonmember(start_date, end_date, plate1, plate2, province, status, plaza)
+        else:
+            return {"error": "member_type ต้องเป็น MEMBER หรือ NONMEMBER"}
+
+        return {"data": result}
+
+    except Exception as e:
+        print("❌ Tran Search API Error:", e)
         return {"error": str(e)}

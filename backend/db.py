@@ -362,3 +362,119 @@ def search_nonmember_receipt(plate1, plate2, province, invoice_no, start_date, e
     columns = [col[0].lower() for col in cursor.description]
     return [dict(zip(columns, row)) for row in rows]
 
+# ✅ ฟังก์ชันตรวจสอบรายการผ่านทาง Member
+def get_tran_member(start_date, end_date, plate1, plate2, province, status, plaza):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    base_query = """
+        SELECT TA.REF_TRANSACTION_ID, B.TRANSACTION_ID, 
+            TO_CHAR(ADD_MONTHS(B.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS TranDate,
+            TO_CHAR(B.TRANSACTION_DATE, 'HH24:MI:SS') AS TranTime,
+            A.PLATE1 || ' ' || B.PLATE2 AS Licesne, 
+            V.DESCRIPTION AS Province, W.DESCRIPTION AS WheelType,
+            B.TOTAL_AMOUNT, H.NAME AS HQ, P.NAME AS Plaza, L.NAME AS Lane,
+            A.STATUS, CA.BODY_PATH_PIC, CA.PLATE_PATH_PIC
+        FROM INVOICE_SERVICE.MF_INVOICE A  
+        INNER JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL B ON A.INVOICE_NO = B.INVOICE_NO 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_HQ H ON B.HQ_CODE = H.CODE  
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON B.PLAZA_CODE = P.CODE
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_LANE L ON B.LANE_CODE = L.CODE 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON A.PROVINCE = V.CODE 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_FEE_WHEEL W ON B.VEHICLE_WHEEL = W.CODE
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MEMBER_TRANS_CAMERA CA ON B.TRANSACTION_ID = CA.TRANSACTION_ID
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MEMBER_TRANSACTION TA ON B.TRANSACTION_ID = TA.TRANSACTION_ID
+        WHERE A.DELETE_FLAG = 0 
+          AND A.INVOICE_TYPE != 3 
+          AND A.TOTAL_AMOUNT != 0
+          AND A.PLATE1 = :plate1 
+          AND A.PLATE2 = :plate2 
+          AND A.PROVINCE = :province 
+          AND TO_CHAR(B.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date
+    """
+
+    params = {
+        "plate1": plate1,
+        "plate2": plate2,
+        "province": province,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
+
+    if status:
+        base_query += " AND A.STATUS = :status"
+        params["status"] = status
+
+    if plaza:
+        base_query += " AND B.PLAZA_CODE = :plaza"
+        params["plaza"] = plaza
+
+    base_query += " ORDER BY B.TRANSACTION_DATE DESC"
+
+    cursor.execute(base_query, params)
+    columns = [col[0].lower() for col in cursor.description]
+    rows = cursor.fetchall()
+    results = [dict(zip(columns, row)) for row in rows]
+
+    cursor.close()
+    conn.close()
+    return results
+
+# ✅ ฟังก์ชันตรวจสอบรายการผ่านทาง Nonmember
+def get_tran_nonmember(start_date, end_date, plate1, plate2, province, status, plaza):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    base_query = """
+        SELECT TA.REF_TRANSACTION_ID, B.TRANSACTION_ID, 
+            TO_CHAR(ADD_MONTHS(B.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS TranDate,
+            TO_CHAR(B.TRANSACTION_DATE, 'HH24:MI:SS') AS TranTime,
+            A.PLATE1 || ' ' || B.PLATE2 AS Licesne, 
+            V.DESCRIPTION AS Province, W.DESCRIPTION AS WheelType,
+            B.TOTAL_AMOUNT, H.NAME AS HQ, P.NAME AS Plaza, L.NAME AS Lane,
+            A.STATUS, CA.BODY_PATH_PIC, CA.PLATE_PATH_PIC
+        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER A  
+        INNER JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER B ON A.INVOICE_NO = B.INVOICE_NO 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_HQ H ON B.HQ_CODE = H.CODE  
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON B.PLAZA_CODE = P.CODE
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_LANE L ON B.LANE_CODE = L.CODE 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON A.PROVINCE = V.CODE 
+        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_FEE_WHEEL W ON B.VEHICLE_WHEEL = W.CODE
+        LEFT JOIN NONMEMBER_SERVICE.MF_NONM_TRANS_CAMERA CA ON B.TRANSACTION_ID = CA.TRANSACTION_ID
+        LEFT JOIN NONMEMBER_SERVICE.MF_NONM_TRANSACTION TA ON B.TRANSACTION_ID = TA.TRANSACTION_ID
+        WHERE A.DELETE_FLAG = 0 
+          AND A.INVOICE_TYPE != 3 
+          AND A.TOTAL_AMOUNT != 0
+          AND A.PLATE1 = :plate1 
+          AND A.PLATE2 = :plate2 
+          AND A.PROVINCE = :province 
+          AND TO_CHAR(B.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date
+    """
+
+    params = {
+        "plate1": plate1,
+        "plate2": plate2,
+        "province": province,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
+
+    if status:
+        base_query += " AND A.STATUS = :status"
+        params["status"] = status
+
+    if plaza:
+        base_query += " AND B.PLAZA_CODE = :plaza"
+        params["plaza"] = plaza
+
+    base_query += " ORDER BY B.TRANSACTION_DATE DESC"
+
+    cursor.execute(base_query, params)
+    columns = [col[0].lower() for col in cursor.description]
+    rows = cursor.fetchall()
+    results = [dict(zip(columns, row)) for row in rows]
+
+    cursor.close()
+    conn.close()
+    return results
+

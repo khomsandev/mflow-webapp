@@ -13,6 +13,9 @@ import InvoiceResultPage from "./pages/InvoiceResultPage";
 import ReceiptSearchMemberPage from "./pages/ReceiptSearchMemberPage"
 import ReceiptSearchNonmemberPage from "./pages/ReceiptSearchNonmemberPage"
 import ReceiptResultPage from "./pages/ReceiptResultPage"
+import TranSearchMemberPage from "./pages/TranSearchMemberPage"
+import TranSearchNonmemberPage from "./pages/TranSearchNonmemberPage"
+import TranResultPage from "./pages/TranResultPage"
 
 function App() {
   return (
@@ -40,6 +43,11 @@ function App() {
           <Route path="receipt-member" element={<ReceiptSearchMemberPage />} />
           <Route path="receipt-nonmember" element={<ReceiptSearchNonmemberPage />} />
           <Route path="receipt-result" element={<ReceiptResultPage />} />
+
+          {/* 🔹 Tran search routes */}
+          <Route path="tran-member" element={<TranSearchMemberPage />} />
+          <Route path="tran-nonmember" element={<TranSearchNonmemberPage />} />
+          <Route path="tran-result" element={<TranResultPage />} />
         </Route>
       </Routes>
     </Router>
