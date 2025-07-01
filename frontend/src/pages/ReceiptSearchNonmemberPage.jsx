@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from '../config';
+import provincesData from "../data/provinces.json";
 
 export default function ReceiptSearchNonmemberPage() {
   const navigate = useNavigate();
@@ -17,29 +17,9 @@ export default function ReceiptSearchNonmemberPage() {
   const [loadingProvinces, setLoadingProvinces] = useState(true); // สถานะการโหลดของ Dropdown
 
   // *** Function สำหรับดึงข้อมูลจังหวัดจาก Backend ***
-  const fetchProvinces = async () => {
-    try {
-      setLoadingProvinces(true); // ตั้งค่าสถานะว่ากำลังโหลด
-      // URL ของ Endpoint ใน FastAPI ที่เราสร้างไว้ใน main.py
-      const res = await fetch(`${API_BASE_URL}/get-provinces`);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch provinces: ${res.status}`);
-      }
-      const data = await res.json();
-      // สมมติว่า Backend ส่งข้อมูลมาในรูปแบบ { "provinces": [{ code: "TH-10", name: "กรุงเทพมหานคร" }, ...] }
-      setProvinceOptions(data.provinces || []); 
-    } catch (err) {
-      console.error("Error fetching provinces:", err);
-      // แสดงข้อความแจ้งเตือนผู้ใช้หากดึงข้อมูลไม่ได้
-      alert("ไม่สามารถโหลดรายการจังหวัดได้ กรุณาลองใหม่ภายหลัง");
-    } finally {
-      setLoadingProvinces(false); // ตั้งค่าสถานะว่าโหลดเสร็จแล้ว
-    }
-  };
-
-  // *** ใช้ useEffect เพื่อเรียก fetchProvinces เมื่อ Component โหลดครั้งแรก ***
-  useEffect(() => {
-    fetchProvinces();
+    useEffect(() => {
+    setProvinceOptions(provincesData);
+    setLoadingProvinces(false);
   }, []);
 
   const handleSearch = () => {
@@ -60,52 +40,59 @@ export default function ReceiptSearchNonmemberPage() {
     <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
       <div className="max-w-3xl mx-auto p-4">
         <h2 className="text-2xl font-bold mb-6">ค้นหาใบเสร็จรับเงิน (ไม่ใช่สมาชิก)</h2>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <input
-            type="text"
-            value={plate1}
-            onChange={(e) => setPlate1(e.target.value)}
-            placeholder="PLATE 1"
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            value={plate2}
-            onChange={(e) => setPlate2(e.target.value)}
-            placeholder="PLATE 2"
-            className="p-2 border rounded"
-          />
+          <div>
+            <label htmlFor="plate1-input" className="block text-gray-700 text-sm font-semibold mb-1">
+              หมวดหมู่
+            </label>
+            <input
+              type="text"
+              value={plate1}
+              onChange={(e) => setPlate1(e.target.value)}
+              placeholder="ตัวอย่าง : กข"
+              className="p-2 border rounded w-full"
+            />
+          </div>
 
-          <select
-            value={province} // ผูกกับ state 'province'
-            onChange={(e) => setProvince(e.target.value)} // อัปเดต state เมื่อเลือก
-            className="p-2 border rounded"
-            disabled={loadingProvinces} // ปิด dropdown ขณะโหลดข้อมูล
-          >
-            {loadingProvinces ? (
-              // แสดงสถานะโหลด
-              <option value="">กำลังโหลดจังหวัด...</option>
-            ) : (
-              // แสดงตัวเลือกจังหวัด
-              <>
-                <option value="">-- เลือกจังหวัด --</option> {/* ตัวเลือกเริ่มต้น/placeholder */}
-                {provinceOptions.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name}
-                  </option>
-                ))}
-              </>
-            )}
-          </select>
+          <div>
+            <label htmlFor="plate2-input" className="block text-gray-700 text-sm font-semibold mb-1">
+              เลขทะเบียน
+            </label>
+            <input
+              type="text"
+              value={plate2}
+              onChange={(e) => setPlate2(e.target.value)}
+              placeholder="ตัวอย่าง : 1234"
+              className="p-2 border rounded w-full"
+            />
+          </div>
 
-          {/* <input
-            type="text"
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            placeholder="จังหวัด (รหัส เช่น TH-10)"
-            className="p-2 border rounded"
-          /> */}
+          <div>
+            <label htmlFor="province-select" className="block text-gray-700 text-sm font-semibold mb-1">
+              จังหวัด
+            </label>
+            <select
+              value={province} // ผูกกับ state 'province'
+              onChange={(e) => setProvince(e.target.value)} // อัปเดต state เมื่อเลือก
+              className="p-2 border rounded w-full"
+              disabled={loadingProvinces} // ปิด dropdown ขณะโหลดข้อมูล
+            >
+              {loadingProvinces ? (
+                // แสดงสถานะโหลด
+                <option value="">กำลังโหลดจังหวัด...</option>
+              ) : (
+                // แสดงตัวเลือกจังหวัด
+                <>
+                  <option value="">-- เลือกจังหวัด --</option> {/* ตัวเลือกเริ่มต้น/placeholder */}
+                  {provinceOptions.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.name}
+                    </option>
+                  ))}
+                </>
+              )}
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-1 gap-2 mb-4">

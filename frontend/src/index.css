@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@200;300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +7,7 @@
 
 /* ตั้งค่าฟอนต์สำหรับทั้งเว็บ */
 body {
-  font-family: 'Kanit', sans-serif;
+  font-family: 'Bai Jamjuree', sans-serif;
 }
 
 @keyframes progress {

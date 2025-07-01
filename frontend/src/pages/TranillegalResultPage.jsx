@@ -9,7 +9,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-export default function TranResultPage() {
+export default function TranillegalResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [results, setResults] = useState([]);
@@ -18,39 +18,20 @@ export default function TranResultPage() {
   // ฟังกชั่น zoom img
   const [zoomImageUrl, setZoomImageUrl] = useState(null);
   const [zoomScale, setZoomScale] = useState(1);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-
   const openZoom = (url) => {
     setZoomImageUrl(url);
     setZoomScale(1);
-    setDragOffset({ x: 0, y: 0 }); // Reset ตำแหน่งเลื่อนด้วย
   };
   const closeZoom = () => setZoomImageUrl(null);
 
   const handleWheelZoom = (e) => {
   e.preventDefault();
-    const delta = e.deltaY;
-    setZoomScale((prev) => {
-      const newScale = delta < 0 ? prev + 0.1 : prev - 0.1;
-      return Math.min(Math.max(newScale, 1), 5); // จำกัด scale ระหว่าง 1 - 5
-    });
-  };
-
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    setDragOffset({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  const delta = e.deltaY;
+  setZoomScale((prev) => {
+    const newScale = delta < 0 ? prev + 0.1 : prev - 0.1;
+    return Math.min(Math.max(newScale, 1), 5); // จำกัด scale ระหว่าง 1 - 5
+  });
+};
 
 
   // Pagination
@@ -60,7 +41,7 @@ export default function TranResultPage() {
   const offset = (currentPage - 1) * itemsPerPage;
 
   const queryParams = new URLSearchParams(location.search);
-  const memberType = queryParams.get("member_type") || "MEMBER";
+  const memberType = queryParams.get("member_type") || "ILLEGAL";
   const startDate = queryParams.get("start_date");
   const endDate = queryParams.get("end_date");
   const formatDateTH = (dateStr) => {
@@ -107,14 +88,12 @@ export default function TranResultPage() {
 
       <div className="flex flex-wrap gap-2 mb-4">
         <button
-          onClick={() =>
-            navigate(memberType === "MEMBER" ? "/tran-member" : "/tran-nonmember")
-          }
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          <ArrowBigLeft className="w-5 h-5" />
-          ย้อนกลับ
-        </button>
+              onClick={() => navigate("/tran-illegal")}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              <ArrowBigLeft className="w-6 h-6" />
+              ย้อนกลับ
+          </button>
       </div>
 
       <p className="mt-4 text-sm text-gray-600">
@@ -140,10 +119,10 @@ export default function TranResultPage() {
                 <th className="px-2 py-1 border">ทะเบียน</th>
                 <th className="px-2 py-1 border">จังหวัด</th>
                 <th className="px-2 py-1 border">ประเภทล้อ</th>
-                <th className="px-2 py-1 border">จำนวนเงิน</th>
+                {/* <th className="px-2 py-1 border">จำนวนเงิน</th> */}
                 <th className="px-2 py-1 border">ด่าน</th>
                 <th className="px-2 py-1 border">เลน</th>
-                <th className="px-2 py-1 border">สถานะ</th>
+                {/* <th className="px-2 py-1 border">สถานะ</th> */}
                 <th className="px-2 py-1 border">รูปหน้ารถ</th>
                 <th className="px-2 py-1 border">รูปป้ายทะเบียน</th>
               </tr>
@@ -159,10 +138,10 @@ export default function TranResultPage() {
                   <td className="border px-2 py-1">{item.licesne}</td>
                   <td className="border px-2 py-1">{item.province}</td>
                   <td className="border px-2 py-1">{item.wheeltype}</td>
-                  <td className="border px-2 py-1 text-center">{item.total_amount?.toLocaleString()}</td>
+                  {/* <td className="border px-2 py-1 text-center">{item.total_amount?.toLocaleString()}</td> */}
                   <td className="border px-2 py-1">{item.plaza}</td>
                   <td className="border px-2 py-1">{item.lane}</td>
-                  <td className="border px-2 py-1">{item.status}</td>
+                  {/* <td className="border px-2 py-1">{item.status}</td> */}
                   <td className="border px-2 py-1">
                       {item.body_path_pic ? (
                         <img
@@ -237,36 +216,33 @@ export default function TranResultPage() {
 
       {zoomImageUrl && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 z-40 overflow-hidden cursor-grab"
-          onWheel={handleWheelZoom}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={closeZoom}
         >
-          {/* ปุ่มปิด */}
-          <button
-            onClick={closeZoom}
-            className="fixed top-4 right-4 bg-white text-black rounded-full px-3 py-2 shadow-lg hover:bg-gray-200 z-50"
-          >
-            ❌
-          </button>
-
-          {/* รูปภาพที่เลื่อนและ Zoom ได้ */}
-          <img
-            src={zoomImageUrl}
-            alt="Zoom"
-            onMouseDown={handleMouseDown}
+          {/* ป้องกันคลิกที่รูปแล้ว modal ปิด */}
+          <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              transform: `translate(calc(-50% + ${dragOffset.x}px), calc(-50% + ${dragOffset.y}px)) scale(${zoomScale})`,
-              cursor: isDragging ? "grabbing" : "grab",
-            }}
-            className="max-w-none max-h-none absolute left-1/2 top-1/2"
-          />
+            className="relative"
+            onWheel={handleWheelZoom}
+          >
+            {/* ปุ่มปิด */}
+            <button
+              onClick={closeZoom}
+              className="fixed top-4 right-4 bg-white text-black rounded-full px-3 py-2 shadow-lg hover:bg-gray-200 z-50"
+            >
+              ❌
+            </button>
+
+            {/* รูปภาพ Zoom ได้ */}
+            <img
+              src={zoomImageUrl}
+              alt="Zoom"
+              className="max-w-4xl max-h-[90vh] rounded shadow-lg transition-transform duration-300"
+              style={{ transform: `scale(${zoomScale})` }}
+            />
+          </div>
         </div>
       )}
-
-
     </div>
   );
 }

@@ -2,46 +2,44 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import provincesData from "../data/provinces.json";
 
-export default function TranSearchNonmemberPage() {
+export default function TranSearchIllegalPage() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const [plate1, setPlate1] = useState("");
   const [plate2, setPlate2] = useState("");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
-  const [status, setStatus] = useState("");
   const [plaza, setPlaza] = useState("");
 
   // *** เพิ่ม States สำหรับ Dropdown จังหวัด ***
-  const [province, setProvince] = useState(""); 
-  const [provinceOptions, setProvinceOptions] = useState([]); 
-  const [loadingProvinces, setLoadingProvinces] = useState(true); 
+  const [province, setProvince] = useState("");
+  const [provinceOptions, setProvinceOptions] = useState([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(true);
 
   // *** Function สำหรับดึงข้อมูลจังหวัดจาก Backend ***
-    useEffect(() => {
+  useEffect(() => {
     setProvinceOptions(provincesData);
     setLoadingProvinces(false);
   }, []);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    params.append("member_type", "NONMEMBER");
+    params.append("member_type", "ILLEGAL");
 
     if (plate1) params.append("plate1", plate1);
     if (plate2) params.append("plate2", plate2);
     if (province) params.append("province", province);
     if (startDate) params.append("start_date", startDate);
     if (endDate) params.append("end_date", endDate);
-    if (status) params.append("status", status);
     if (plaza) params.append("plaza", plaza);
 
-    navigate(`/tran-result?${params.toString()}`);
+    navigate(`/tran-result-illegal?${params.toString()}`);
   };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
       <div className="mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-6">ตรวจสอบการผ่านทางที่ไม่ใช่สมาชิก</h2>
+        <h2 className="text-2xl font-bold mb-6">ตรวจสอบการผ่านทางที่ผิดกฎหมาย</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -100,16 +98,18 @@ export default function TranSearchNonmemberPage() {
               จังหวัด
             </label>
             <select
-              value={province}
-              onChange={(e) => setProvince(e.target.value)}
+              value={province} // ผูกกับ state 'province'
+              onChange={(e) => setProvince(e.target.value)} // อัปเดต state เมื่อเลือก
               className="p-2 border rounded w-full"
-              disabled={loadingProvinces}
+              disabled={loadingProvinces} // ปิด dropdown ขณะโหลดข้อมูล
             >
               {loadingProvinces ? (
+                // แสดงสถานะโหลด
                 <option value="">กำลังโหลดจังหวัด...</option>
               ) : (
+                // แสดงตัวเลือกจังหวัด
                 <>
-                  <option value="">-- เลือกจังหวัด --</option>
+                  <option value="">-- เลือกจังหวัด --</option> {/* ตัวเลือกเริ่มต้น/placeholder */}
                   {provinceOptions.map((option) => (
                     <option key={option.code} value={option.code}>
                       {option.name}
@@ -123,7 +123,7 @@ export default function TranSearchNonmemberPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
+          {/* <div>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -136,7 +136,7 @@ export default function TranSearchNonmemberPage() {
               <option value="PAYMENT_INPROGRESS">PAYMENT_INPROGRESS</option>
               <option value="BATCH_PROCESSING">BATCH_PROCESSING</option>
             </select>
-          </div>
+          </div> */}
           
           <div>
             <select
@@ -172,7 +172,6 @@ export default function TranSearchNonmemberPage() {
                 setPlate1("");
                 setPlate2("");
                 setProvince("");
-                setStatus("");
                 setPlaza("");
               }}
               className="p-2 border rounded w-full bg-red-500 text-white hover:bg-gray-400 transition"

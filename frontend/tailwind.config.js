@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Kanit", "sans-serif"], // ตั้งค่า default font เป็น Kanit
+        sans: ["Bai Jamjuree", "sans-serif"],
       },
     },
   },

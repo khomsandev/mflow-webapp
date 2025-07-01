@@ -16,6 +16,8 @@ import ReceiptResultPage from "./pages/ReceiptResultPage"
 import TranSearchMemberPage from "./pages/TranSearchMemberPage"
 import TranSearchNonmemberPage from "./pages/TranSearchNonmemberPage"
 import TranResultPage from "./pages/TranResultPage"
+import TranSearchIllegalPage from "./pages/TranSearchillegalPage"
+import TranillegalResultPage from "./pages/TranillegalResultPage"
 
 function App() {
   return (
@@ -47,7 +49,9 @@ function App() {
           {/* 🔹 Tran search routes */}
           <Route path="tran-member" element={<TranSearchMemberPage />} />
           <Route path="tran-nonmember" element={<TranSearchNonmemberPage />} />
+          <Route path="tran-illegal" element={<TranSearchIllegalPage />} />
           <Route path="tran-result" element={<TranResultPage />} />
+          <Route path="tran-result-illegal" element={<TranillegalResultPage />} />
         </Route>
       </Routes>
     </Router>

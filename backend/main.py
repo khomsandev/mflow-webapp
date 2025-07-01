@@ -10,6 +10,7 @@ from db import search_member_receipt
 from db import search_nonmember_receipt
 from db import get_tran_member
 from db import get_tran_nonmember
+from db import get_tran_illegal
 from typing import Optional, List, Dict
 import io, os, zipfile, requests
 
@@ -53,20 +54,6 @@ def download_ebill_zip(file_ids: List[str] = Body(...)):
         "Content-Disposition": "attachment; filename=ebill_files.zip"
     })
 
-# *** NEW ENDPOINT: สำหรับดึงรายการจังหวัด ***
-@app.get("/get-provinces", response_model=Dict[str, List[Dict[str, str]]])
-async def get_provinces():
-    try:
-        # เรียกใช้ฟังก์ชัน get_all_provinces จาก db.py
-        provinces_data = get_all_provinces()
-        return JSONResponse(content={"provinces": provinces_data})
-    except HTTPException: # ถ้าเป็น HTTPException จาก db layer ก็โยนต่อเลย
-        raise
-    except Exception as e:
-        print(f"❌ API Error fetching provinces: {e}")
-        # ส่งข้อผิดพลาด 500 Internal Server Error กลับไป
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve province data: {e}")
- 
 
 @app.get("/check")
 def check_ref(ref_id: Optional[str] = None, last4: Optional[str] = None, date: Optional[str] = None):
@@ -190,8 +177,10 @@ def search_tran(
             result = get_tran_member(start_date, end_date, plate1, plate2, province, status, plaza)
         elif member_type_upper == "NONMEMBER":
             result = get_tran_nonmember(start_date, end_date, plate1, plate2, province, status, plaza)
+        elif member_type_upper == "ILLEGAL":
+            result = get_tran_illegal(start_date, end_date, plate1, plate2, province, plaza)
         else:
-            return {"error": "member_type ต้องเป็น MEMBER หรือ NONMEMBER"}
+            return {"error": "member_type ต้องเป็น MEMBER หรือ NONMEMBER หรือ ILLEGAL"}
 
         return {"data": result}
 

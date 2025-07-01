@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from '../config';
+import provincesData from "../data/provinces.json";
 
 export default function TranSearchMemberPage() {
   const navigate = useNavigate();
@@ -17,30 +17,10 @@ export default function TranSearchMemberPage() {
   const [provinceOptions, setProvinceOptions] = useState([]); // เก็บรายการจังหวัดจาก API
   const [loadingProvinces, setLoadingProvinces] = useState(true); // สถานะการโหลดของ Dropdown
 
-  // *** Function สำหรับดึงข้อมูลจังหวัดจาก Backend ***
-  const fetchProvinces = async () => {
-    try {
-      setLoadingProvinces(true); // ตั้งค่าสถานะว่ากำลังโหลด
-      // URL ของ Endpoint ใน FastAPI ที่เราสร้างไว้ใน main.py
-      const res = await fetch(`${API_BASE_URL}/get-provinces`);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch provinces: ${res.status}`);
-      }
-      const data = await res.json();
-      // สมมติว่า Backend ส่งข้อมูลมาในรูปแบบ { "provinces": [{ code: "TH-10", name: "กรุงเทพมหานคร" }, ...] }
-      setProvinceOptions(data.provinces || []); 
-    } catch (err) {
-      console.error("Error fetching provinces:", err);
-      // แสดงข้อความแจ้งเตือนผู้ใช้หากดึงข้อมูลไม่ได้
-      alert("ไม่สามารถโหลดรายการจังหวัดได้ กรุณาลองใหม่ภายหลัง");
-    } finally {
-      setLoadingProvinces(false); // ตั้งค่าสถานะว่าโหลดเสร็จแล้ว
-    }
-  };
-
-  // *** ใช้ useEffect เพื่อเรียก fetchProvinces เมื่อ Component โหลดครั้งแรก ***
-  useEffect(() => {
-    fetchProvinces();
+  // *** Function สำหรับดึงข้อมูลจังหวัดจาก src/data/provinces.json ***
+   useEffect(() => {
+    setProvinceOptions(provincesData);
+    setLoadingProvinces(false);
   }, []);
 
   const handleSearch = () => {
@@ -120,18 +100,16 @@ export default function TranSearchMemberPage() {
               จังหวัด
             </label>
             <select
-              value={province} // ผูกกับ state 'province'
-              onChange={(e) => setProvince(e.target.value)} // อัปเดต state เมื่อเลือก
+              value={province}
+              onChange={(e) => setProvince(e.target.value)}
               className="p-2 border rounded w-full"
-              disabled={loadingProvinces} // ปิด dropdown ขณะโหลดข้อมูล
+              disabled={loadingProvinces}
             >
               {loadingProvinces ? (
-                // แสดงสถานะโหลด
                 <option value="">กำลังโหลดจังหวัด...</option>
               ) : (
-                // แสดงตัวเลือกจังหวัด
                 <>
-                  <option value="">-- เลือกจังหวัด --</option> {/* ตัวเลือกเริ่มต้น/placeholder */}
+                  <option value="">-- เลือกจังหวัด --</option>
                   {provinceOptions.map((option) => (
                     <option key={option.code} value={option.code}>
                       {option.name}

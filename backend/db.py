@@ -478,3 +478,49 @@ def get_tran_nonmember(start_date, end_date, plate1, plate2, province, status, p
     conn.close()
     return results
 
+# ✅ ฟังก์ชันตรวจสอบรายการผ่านทาง illegal
+def get_tran_illegal(start_date, end_date, plate1, plate2, province, plaza):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    base_query = """
+        SELECT A.TRANSACTION_ID, TO_CHAR(ADD_MONTHS(A.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS TranDate,
+            TO_CHAR(A.TRANSACTION_DATE, 'HH24:MI:SS') AS TranTime,
+            A.VEHICLE_LICENSE_1 || ' ' || A.VEHICLE_LICENSE_2 AS Licesne, B.DESCRIPTION AS Province, C.DESCRIPTION AS WheelType,
+            H.NAME AS HQ, P.NAME AS Plaza, L.NAME AS Lane, CA.BODY_PATH_PIC, CA.PLATE_PATH_PIC
+        FROM VERIFY_ILLEGAL_SERVICE.MF_VEILL_ILLEGAL_TRANSACTION A
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_MASTER_VHC_OFFICE B ON B.CODE = A.VEHICLE_PROVINCE
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_MAS_FEE_WHEEL C ON C.CODE = A.VEHICLE_WHEEL_CODE
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_MASTER_HQ H ON H.CODE = A.HQ_CODE
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_MASTER_PLAZA P ON P.CODE = A.PLAZA_CODE
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_MASTER_LANE L ON L.CODE = A.LANE_CODE
+        LEFT JOIN VERIFY_ILLEGAL_SERVICE.MF_VEILL_ILLEGAL_TRANS_CAMERA CA ON A.TRANSACTION_ID = CA.TRANSACTION_ID
+        WHERE A.DELETE_FLAG = 0 
+          AND A.VEHICLE_LICENSE_1 = :plate1 
+          AND A.VEHICLE_LICENSE_2 = :plate2 
+          AND A.VEHICLE_PROVINCE = :province 
+          AND TO_CHAR(A.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date
+    """
+
+    params = {
+        "plate1": plate1,
+        "plate2": plate2,
+        "province": province,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
+
+    if plaza:
+        base_query += " AND A.PLAZA_CODE = :plaza"
+        params["plaza"] = plaza
+
+    base_query += " ORDER BY A.TRANSACTION_DATE DESC"
+
+    cursor.execute(base_query, params)
+    columns = [col[0].lower() for col in cursor.description]
+    rows = cursor.fetchall()
+    results = [dict(zip(columns, row)) for row in rows]
+
+    cursor.close()
+    conn.close()
+    return results

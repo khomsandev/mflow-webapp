@@ -13,6 +13,7 @@ import {
   SquareCheck,
   UserCheck,
   UserX,
+  TriangleAlert,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -62,7 +63,7 @@ export default function Sidebar() {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex items-center gap-2 px-3 py-2 rounded font-medium ${
+            `flex items-center gap-2 px-3 py-2 rounded font-semibold text-sm ${
               isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
             }`
           }
@@ -74,7 +75,7 @@ export default function Sidebar() {
         <div>
           <button
             onClick={() => setOpenTran(!OpenTran)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded font-medium text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <SquareCheck className="w-4 h-4" />
@@ -107,6 +108,17 @@ export default function Sidebar() {
                 <UserX className="w-5 h-5"/>
                 ตรวจสอบการผ่านทางที่ไม่ใช่สมาชิก
               </NavLink>
+              <NavLink
+                to="/tran-illegal"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 text-sm px-3 py-1 rounded-md transition-colors duration-200 ${
+                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                  }`
+                }
+              >
+                <TriangleAlert className="w-5 h-5"/>
+                ตรวจสอบการผ่านทางที่ผิดกฎหมาย
+              </NavLink>
             </div>
           )}
         </div>
@@ -115,7 +127,7 @@ export default function Sidebar() {
         <NavLink
           to="/ref-checker"
           className={({ isActive }) =>
-            `flex items-center gap-2 px-3 py-2 rounded font-medium ${
+            `flex items-center gap-2 px-3 py-2 rounded text-sm font-semibold ${
               isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
             }`
           }
@@ -127,7 +139,7 @@ export default function Sidebar() {
         <div>
           <button
             onClick={() => setOpenVIP(!openVIP)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded font-medium text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -166,7 +178,7 @@ export default function Sidebar() {
         <div>
           <button
             onClick={() => setOpenInvoice(!openInvoice)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded font-medium text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <FileSearch className="w-4 h-4" />
@@ -205,7 +217,7 @@ export default function Sidebar() {
         <div>
           <button
             onClick={() => setOpenReceipt(!OpenReceipt)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded font-medium text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <FileCheck2 className="w-4 h-4" />

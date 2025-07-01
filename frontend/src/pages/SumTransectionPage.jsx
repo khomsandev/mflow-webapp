@@ -28,7 +28,7 @@ export default function SumTransectionPage() {
     <div className="max-w-xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
       <h1 className="text-2xl font-bold mb-4">รายการผ่านทาง</h1>
 
-      <label className="block text-sm font-medium text-gray-700 mb-1">เลือกบริษัท</label>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">เลือกบริษัท</label>
       <select
         value={customerId}
         onChange={(e) => setCustomerId(e.target.value)}
@@ -42,7 +42,7 @@ export default function SumTransectionPage() {
         ))}
       </select>
 
-      <label className="block text-sm font-medium text-gray-700 mb-1">วันที่เริ่มต้น</label>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">วันที่เริ่มต้น</label>
       <input
         type="date"
         value={startDate}
@@ -50,7 +50,7 @@ export default function SumTransectionPage() {
         className="w-full border p-2 rounded mb-4"
       />
 
-      <label className="block text-sm font-medium text-gray-700 mb-1">วันที่สิ้นสุด</label>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">วันที่สิ้นสุด</label>
       <input
         type="date"
         value={endDate}
