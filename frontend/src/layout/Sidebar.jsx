@@ -14,15 +14,27 @@ import {
   UserCheck,
   UserX,
   TriangleAlert,
+  Menu,
 } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();
+
+  // โหลดค่าจาก localStorage (true/false) ตอนเริ่มต้น
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem("sidebar-collapsed") === "true"
+  );
+
+  const toggleSidebar = () => {
+    const newValue = !collapsed;
+    setCollapsed(newValue);
+    localStorage.setItem("sidebar-collapsed", newValue);
+  };
+
   const [openVIP, setOpenVIP] = useState(false);
   const [openInvoice, setOpenInvoice] = useState(false);
   const [OpenReceipt, setOpenReceipt] = useState(false);
   const [OpenTran, setOpenTran] = useState(false);
-
 
   useEffect(() => {
     if (
@@ -31,93 +43,92 @@ export default function Sidebar() {
     ) {
       setOpenVIP(true);
     }
-
     if (
       location.pathname.startsWith("/invoice-member") ||
       location.pathname.startsWith("/invoice-nonmember")
     ) {
       setOpenInvoice(true);
     }
-
     if (
       location.pathname.startsWith("/receipt-member") ||
       location.pathname.startsWith("/receipt-nonmember")
     ) {
       setOpenReceipt(true);
     }
-
     if (
       location.pathname.startsWith("/tran-member") ||
-      location.pathname.startsWith("/tran-nonmember")
-    ){
-      setOpenTran(true)
+      location.pathname.startsWith("/tran-nonmember") ||
+      location.pathname.startsWith("/tran-illegal")
+    ) {
+      setOpenTran(true);
     }
-
   }, [location.pathname]);
 
   return (
-    <aside className="w-64 bg-gray-100 p-6 shadow-inner">
-      <nav className="flex flex-col space-y-4">
+    <aside className={`bg-gray-100 p-4 shadow-inner transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+      <div className="flex items-center justify-between mb-4">
+        {!collapsed && <h1 className="text-lg font-bold text-gray-700">เมนู</h1>}
+        <button
+          onClick={toggleSidebar}
+          className="text-gray-600 hover:text-blue-600"
+          title="พับ/ขยายเมนู"
+        >
+          <Menu />
+        </button>
+      </div>
 
+      <nav className="flex flex-col space-y-4 text-sm font-medium">
         {/* Dashboard */}
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex items-center gap-2 px-3 py-2 rounded font-semibold text-sm ${
+            `flex items-center gap-2 px-3 py-2 rounded ${
               isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
             }`
           }
         >
-          <LayoutDashboard className="w-4 h-4" /> แดชบอร์ด
+          <LayoutDashboard className="w-4 h-4" />
+          {!collapsed && "แดชบอร์ด"}
         </NavLink>
 
-        {/* เมนู ตรวจสอบรายการผ่านทาง */}
+        {/* ตรวจสอบรายการผ่านทาง */}
         <div>
           <button
             onClick={() => setOpenTran(!OpenTran)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <SquareCheck className="w-4 h-4" />
-              ตรวจสอบการผ่านทาง
+              {!collapsed && "ตรวจสอบการผ่านทาง"}
             </span>
-            {OpenTran ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {!collapsed && (OpenTran ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />)}
           </button>
 
-          {OpenTran && (
+          {OpenTran && !collapsed && (
             <div className="ml-6 mt-2 flex flex-col space-y-2">
-              <NavLink
-                to="/tran-member"
-                className={({ isActive }) =>
-                  `flex items-center gap-2 text-sm px-3 py-1 rounded-md transition-colors duration-200 ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
-                <UserCheck  className="w-5 h-5"/>
-                ตรวจสอบการผ่านทางของสมาชิก
+              <NavLink to="/tran-member" className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
+                <UserCheck className="w-4 h-4" />
+                สมาชิก
               </NavLink>
-              <NavLink
-                to="/tran-nonmember"
-                className={({ isActive }) =>
-                  `flex items-center gap-2 text-sm px-3 py-1 rounded-md transition-colors duration-200 ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
-                <UserX className="w-5 h-5"/>
-                ตรวจสอบการผ่านทางที่ไม่ใช่สมาชิก
+              <NavLink to="/tran-nonmember" className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
+                <UserX className="w-4 h-4" />
+                ไม่ใช่สมาชิก
               </NavLink>
-              <NavLink
-                to="/tran-illegal"
-                className={({ isActive }) =>
-                  `flex items-center gap-2 text-sm px-3 py-1 rounded-md transition-colors duration-200 ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
-                <TriangleAlert className="w-5 h-5"/>
-                ตรวจสอบการผ่านทางที่ผิดกฎหมาย
+              <NavLink to="/tran-illegal" className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
+                <TriangleAlert className="w-4 h-4" />
+                ผิดกฎหมาย
               </NavLink>
             </div>
           )}
@@ -127,131 +138,115 @@ export default function Sidebar() {
         <NavLink
           to="/ref-checker"
           className={({ isActive }) =>
-            `flex items-center gap-2 px-3 py-2 rounded text-sm font-semibold ${
+            `flex items-center gap-2 px-3 py-2 rounded ${
               isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
             }`
           }
         >
-          <Banknote className="w-4 h-4" /> ตรวจสอบการชำระเงิน
+          <Banknote className="w-4 h-4" />
+          {!collapsed && "ตรวจสอบการชำระเงิน"}
         </NavLink>
 
-        {/* เมนู CustomerVIP */}
+        {/* CustomerVIP */}
         <div>
           <button
             onClick={() => setOpenVIP(!openVIP)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              CustomerVIP
+              {!collapsed && "CustomerVIP"}
             </span>
-            {openVIP ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {!collapsed && (openVIP ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />)}
           </button>
 
-          {openVIP && (
+          {openVIP && !collapsed && (
             <div className="ml-6 mt-2 flex flex-col space-y-2">
-              <NavLink
-                to="/car-balance"
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-1 rounded text-sm ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
-                <Car className="w-4 h-4" /> Car Balance
+              <NavLink to="/car-balance" className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
+                <Car className="w-4 h-4" />
+                Car Balance
               </NavLink>
-              <NavLink
-                to="/sum-transection"
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-1 rounded text-sm ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
-                <ArrowLeftRight className="w-4 h-4" /> รายการผ่านทาง
+              <NavLink to="/sum-transection" className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
+                <ArrowLeftRight className="w-4 h-4" />
+                รายการผ่านทาง
               </NavLink>
             </div>
           )}
         </div>
 
-        {/* เมนู ค้นหาใบแจ้งหนี้ */}
+        {/* ค้นหาใบแจ้งหนี้ */}
         <div>
           <button
             onClick={() => setOpenInvoice(!openInvoice)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <FileSearch className="w-4 h-4" />
-              ค้นหาใบแจ้งหนี้
+              {!collapsed && "ค้นหาใบแจ้งหนี้"}
             </span>
-            {openInvoice ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {!collapsed && (openInvoice ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />)}
           </button>
 
-          {openInvoice && (
+          {openInvoice && !collapsed && (
             <div className="ml-6 mt-2 flex flex-col space-y-2">
-              <NavLink
-                to="/invoice-member"
-                className={({ isActive }) =>
-                  `text-sm px-3 py-1 rounded ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
+              <NavLink to="/invoice-member" className={({ isActive }) =>
+                `px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
                 👤 สมาชิก
               </NavLink>
-              <NavLink
-                to="/invoice-nonmember"
-                className={({ isActive }) =>
-                  `text-sm px-3 py-1 rounded ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
+              <NavLink to="/invoice-nonmember" className={({ isActive }) =>
+                `px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
                 🧾 ไม่ใช่สมาชิก
               </NavLink>
             </div>
           )}
         </div>
 
-        {/* เมนู ค้นหาใบเสร็จรับเงิน */}
+        {/* ค้นหาใบเสร็จรับเงิน */}
         <div>
           <button
             onClick={() => setOpenReceipt(!OpenReceipt)}
-            className="flex items-center justify-between w-full px-3 py-2 rounded text-sm font-semibold text-gray-700 hover:bg-blue-100"
+            className="flex items-center justify-between w-full px-3 py-2 rounded text-gray-700 hover:bg-blue-100"
           >
             <span className="flex items-center gap-2">
               <FileCheck2 className="w-4 h-4" />
-              ค้นหาใบเสร็จรับเงิน
+              {!collapsed && "ค้นหาใบเสร็จรับเงิน"}
             </span>
-            {OpenReceipt ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {!collapsed && (OpenReceipt ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />)}
           </button>
 
-          {OpenReceipt && (
+          {OpenReceipt && !collapsed && (
             <div className="ml-6 mt-2 flex flex-col space-y-2">
-              <NavLink
-                to="/receipt-member"
-                className={({ isActive }) =>
-                  `text-sm px-3 py-1 rounded ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
+              <NavLink to="/receipt-member" className={({ isActive }) =>
+                `px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
                 👤 สมาชิก
               </NavLink>
-              <NavLink
-                to="/receipt-nonmember"
-                className={({ isActive }) =>
-                  `text-sm px-3 py-1 rounded ${
-                    isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
-                  }`
-                }
-              >
+              <NavLink to="/receipt-nonmember" className={({ isActive }) =>
+                `px-3 py-1 rounded ${
+                  isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+                }`
+              }>
                 🧾 ไม่ใช่สมาชิก
               </NavLink>
             </div>
           )}
         </div>
-
       </nav>
     </aside>
   );

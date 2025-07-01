@@ -1,7 +1,7 @@
 // pages/SumTransectionPage.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, ArrowLeftRight } from "lucide-react";
 
 export default function SumTransectionPage() {
     const navigate = useNavigate();
@@ -26,7 +26,10 @@ export default function SumTransectionPage() {
 
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">รายการผ่านทาง</h1>
+      <h2 className="flex gap-3 text-2xl font-bold mb-6">
+          <ArrowLeftRight className="w-8 h-8"/>
+          รายการผ่านทาง
+      </h2>
 
       <label className="block text-sm font-semibold text-gray-700 mb-1">เลือกบริษัท</label>
       <select

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, Banknote } from "lucide-react";
 
 // ฟังก์ชันแปลงวันที่วันนี้เป็น YYYY-MM-DD
 const getTodayDateString = () => {
@@ -26,11 +26,11 @@ export default function RefCheckerPage() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold text-center text-gray-700">
-        ตรวจสอบการชำระเงิน
-          {/* <img src="../mflow-logo.png" alt="MFlow Logo" /> */}
-      </h1>
+    <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-xl mx-auto mt-10">
+      <h2 className="flex gap-3 text-2xl font-bold mb-6">
+          <Banknote className="w-8 h-8"/>
+          ตรวจสอบการชำระเงิน
+      </h2>
 
       <div className="mt-4">
         <label className="block text-sm font-semibold text-gray-700 mb-1">

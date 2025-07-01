@@ -23,16 +23,14 @@ export default function TranResultPage() {
     setZoomScale(1);
   };
   const closeZoom = () => setZoomImageUrl(null);
-
   const handleWheelZoom = (e) => {
-  e.preventDefault();
-  const delta = e.deltaY;
-  setZoomScale((prev) => {
-    const newScale = delta < 0 ? prev + 0.1 : prev - 0.1;
-    return Math.min(Math.max(newScale, 1), 5); // จำกัด scale ระหว่าง 1 - 5
-  });
-};
-
+    e.preventDefault();
+    const delta = e.deltaY;
+    setZoomScale((prev) => {
+      const newScale = delta < 0 ? prev + 0.1 : prev - 0.1;
+      return Math.min(Math.max(newScale, 1), 5); // จำกัด scale ระหว่าง 1 - 5
+    });
+  };
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,10 +96,6 @@ export default function TranResultPage() {
         </button>
       </div>
 
-      <p className="mt-4 text-sm text-gray-600">
-        พบทั้งหมด {results.length.toLocaleString()} รายการ
-      </p>
-
       {loading ? (
         // Loading Spinner สำหรับโหลดข้อมูลตาราง
         <div className="flex flex-col items-center justify-center mt-10 gap-4">
@@ -111,11 +105,11 @@ export default function TranResultPage() {
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-300 rounded shadow-sm text-sm">
-            <thead className="bg-gray-100 text-left">
+            <thead className="bg-blue-500 text-left text-white">
               <tr>
                 <th className="px-2 py-1 border text-center">No.</th>
-                {/* <th className="px-2 py-1 border">Ref_Tran_ID</th> */}
-                <th className="px-2 py-1 border">Tran_ID</th>
+                {/* <th className="px-2 py-1 border">Ref_Transection_ID</th> */}
+                <th className="px-2 py-1 border">Transection_ID</th>
                 <th className="px-2 py-1 border">วันที่ผ่านทาง</th>
                 <th className="px-2 py-1 border">เวลาผ่านทาง</th>
                 <th className="px-2 py-1 border">ทะเบียน</th>
@@ -131,7 +125,7 @@ export default function TranResultPage() {
             </thead>
             <tbody>
               {results.slice(offset, offset + itemsPerPage).map((item, idx) => (
-                <tr key={offset + idx}>
+                <tr key={offset + idx} className="odd:bg-white even:bg-blue-50">
                   <td className="border px-2 py-1 text-center">{offset + idx + 1}</td>
                   {/* <td className="border px-2 py-1">{item.ref_transaction_id}</td> */}
                   <td className="border px-2 py-1 ">{item.transaction_id}</td>
@@ -172,6 +166,10 @@ export default function TranResultPage() {
               ))}
             </tbody>
           </table>
+
+          <p className="mt-4 text-sm text-gray-600">
+            พบทั้งหมด {results.length.toLocaleString()} รายการ
+          </p>
 
           {/* Pagination Controls */}
           {totalPages > 1 && (

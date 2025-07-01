@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import provincesData from "../data/provinces.json";
+import { UserCheck } from "lucide-react";
 
 export default function TranSearchMemberPage() {
   const navigate = useNavigate();
@@ -41,7 +42,10 @@ export default function TranSearchMemberPage() {
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
       <div className="mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-6">ตรวจสอบการผ่านทางของสมาชิก</h2>
+        <h2 className="flex gap-3 text-2xl font-bold mb-6">
+          <UserCheck className="w-8 h-8" />
+          ตรวจสอบการผ่านทางของสมาชิก
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
