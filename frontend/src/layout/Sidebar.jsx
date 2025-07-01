@@ -247,6 +247,21 @@ export default function Sidebar() {
             </div>
           )}
         </div>
+
+        {/* Transection Detail */}
+        <NavLink
+          to="/tran-detail"
+          className={({ isActive }) =>
+            `flex items-center gap-2 px-3 py-2 rounded ${
+              isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+            }`
+          }
+        >
+          <ArrowLeftRight className="w-4 h-4" />
+          {!collapsed && "ค้นหา Transection Detail"}
+        </NavLink>
+        
+
       </nav>
     </aside>
   );

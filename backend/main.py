@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Query, Body, HTTPException
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from db import get_db_data_by_ref_and_date
@@ -11,6 +12,7 @@ from db import search_nonmember_receipt
 from db import get_tran_member
 from db import get_tran_nonmember
 from db import get_tran_illegal
+from db import fetch_tran_details
 from typing import Optional, List, Dict
 import io, os, zipfile, requests
 
@@ -187,3 +189,18 @@ def search_tran(
     except Exception as e:
         print("❌ Tran Search API Error:", e)
         return {"error": str(e)}
+
+
+class TranDetailRequest(BaseModel):
+    ids: List[str]
+    type: str  # "TRANSACTION_ID" or "REF_TRANSACTION_ID"
+
+@app.post("/search-tran-detail")
+def search_tran_detail(req: TranDetailRequest):
+    try:
+        if req.type not in ["TRANSACTION_ID", "REF_TRANSACTION_ID"]:
+            raise HTTPException(status_code=400, detail="Invalid type.")
+        data = fetch_tran_details(req.ids, req.type)
+        return {"data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

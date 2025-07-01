@@ -18,6 +18,8 @@ import TranSearchNonmemberPage from "./pages/TranSearchNonmemberPage"
 import TranResultPage from "./pages/TranResultPage"
 import TranSearchIllegalPage from "./pages/TranSearchillegalPage"
 import TranillegalResultPage from "./pages/TranillegalResultPage"
+import SearchTranDetailPage from "./pages/SearchTranDetailPage"
+import SearchTranDetailResultPage from "./pages/SearchTranDetailResultPage"
 
 function App() {
   return (
@@ -52,6 +54,10 @@ function App() {
           <Route path="tran-illegal" element={<TranSearchIllegalPage />} />
           <Route path="tran-result" element={<TranResultPage />} />
           <Route path="tran-result-illegal" element={<TranillegalResultPage />} />
+
+          <Route path="tran-detail" element={< SearchTranDetailPage />} />
+          <Route path="tran-detail-result" element={ <SearchTranDetailResultPage /> } />
+
         </Route>
       </Routes>
     </Router>

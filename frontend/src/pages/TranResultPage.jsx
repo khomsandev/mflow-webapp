@@ -244,9 +244,6 @@ export default function TranResultPage() {
         </div>
       )}
 
-
-
-
     </div>
   );
 }
