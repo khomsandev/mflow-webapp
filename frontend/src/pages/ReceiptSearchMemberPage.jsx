@@ -52,6 +52,7 @@ export default function ReceiptSearchMemberPage() {
               onChange={(e) => setPlate1(e.target.value)}
               placeholder="ตัวอย่าง : กข"
               className="p-2 border rounded w-full"
+              maxLength={3}
             />
           </div>
 
@@ -62,9 +63,14 @@ export default function ReceiptSearchMemberPage() {
             <input
               type="text"
               value={plate2}
-              onChange={(e) => setPlate2(e.target.value)}
+              // onChange={(e) => setPlate2(e.target.value)}
+              onChange={(e) => {
+                const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                setPlate2(numericValue);
+              }}
               placeholder="ตัวอย่าง : 1234"
               className="p-2 border rounded w-full"
+              maxLength={4}
             />
           </div>
 
