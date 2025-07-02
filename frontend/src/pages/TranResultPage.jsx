@@ -133,7 +133,7 @@ export default function TranResultPage() {
                   <td className="border px-2 py-1">{item.trantime}</td>
                   <td className="border px-2 py-1">{item.licesne}</td>
                   <td className="border px-2 py-1">{item.province}</td>
-                  <td className="border px-2 py-1">{item.wheeltype}</td>
+                  <td className="border px-2 py-1 text-center">{item.wheeltype}</td>
                   <td className="border px-2 py-1 text-center">{item.total_amount?.toLocaleString()}</td>
                   <td className="border px-2 py-1">{item.plaza}</td>
                   <td className="border px-2 py-1">{item.lane}</td>

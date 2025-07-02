@@ -18,31 +18,6 @@ def get_connection():
         dsn=os.getenv("ORA_DSN")
     )
 
-# ✅ฟังก์ชันดึงข้อมูลจังหวัดทั้งหมดจากตาราง CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE
-def get_all_provinces():
-    conn = None
-    cursor = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-    
-        query = "SELECT CODE, DESCRIPTION, DESCRIPTION_EN, ID FROM CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE ORDER BY ID ASC"
-        cursor.execute(query)
-
-        provinces = []
-        for row in cursor:
-            # เก็บข้อมูลในรูปแบบ { "code": "TH-XX", "name": "ชื่อจังหวัด" }
-            provinces.append({"code": row[0], "name": row[1]})
-        return provinces
-    except Exception as e:
-        print(f"เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัดจากฐานข้อมูล: {e}")
-        raise
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-
 # ✅ ฟังก์ชันตรวจสอบการชำระเงิน
 def get_db_data_by_ref_and_date(ref, date_str):
     conn = get_connection()
