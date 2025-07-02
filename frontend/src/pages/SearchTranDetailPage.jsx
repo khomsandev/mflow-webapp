@@ -13,12 +13,13 @@ export default function SearchTranDetailPage() {
       alert("กรุณากรอกข้อมูล");
       return;
     }
-
-    const queryParams = new URLSearchParams();
-    queryParams.set("type", searchType);
-    queryParams.set("data", trimmed);
-
-    navigate(`/tran-detail-result?${queryParams.toString()}`);
+    
+    navigate("/tran-detail-result", {
+      state: {
+        type: searchType,
+        data: trimmed,
+      },
+    });
   };
 
   return (
