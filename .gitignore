@@ -2,6 +2,7 @@
 .env
 .env.*
 frontend/src/config.js
+backend/temp/
 
 # ⛔ ไม่เอา dependencies ของ Node.js
 node_modules/

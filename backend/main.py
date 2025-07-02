@@ -1,3 +1,4 @@
+import io, os, zipfile, requests, uuid, xlsxwriter, time
 from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,7 +7,6 @@ from db import get_db_data_by_ref_and_date
 from db import get_car_balance_by_customer_id
 from db import get_summary_by_customer_id_and_date
 from db import search_member_invoices, search_nonmember_invoices
-from db import get_all_provinces
 from db import search_member_receipt
 from db import search_nonmember_receipt
 from db import get_tran_member
@@ -14,7 +14,7 @@ from db import get_tran_nonmember
 from db import get_tran_illegal
 from db import fetch_tran_details
 from typing import Optional, List, Dict
-import io, os, zipfile, requests
+
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
@@ -35,6 +35,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def cleanup_temp_folder():
+    now = time.time()
+    temp_dir = "temp"
+    if not os.path.exists(temp_dir):
+        return
+    for f in os.listdir(temp_dir):
+        path = os.path.join(temp_dir, f)
+        if os.path.isfile(path) and f.endswith(".xlsx"):
+            if now - os.path.getmtime(path) > 10:  # ใส่เป็นวินาที
+                os.remove(path)
 
 @app.post("/download-zip")
 def download_ebill_zip(file_ids: List[str] = Body(...)):
@@ -200,7 +211,42 @@ def search_tran_detail(req: TranDetailRequest):
     try:
         if req.type not in ["TRANSACTION_ID", "REF_TRANSACTION_ID"]:
             raise HTTPException(status_code=400, detail="Invalid type.")
+        
+        print("🔍 Request Type:", req.type)
+        print("🔍 Number of IDs:", len(req.ids))
+
+        cleanup_temp_folder()  # 🧹 ล้างไฟล์เก่าก่อนเริ่ม
+
         data = fetch_tran_details(req.ids, req.type)
-        return {"data": data}
+        
+        # ตรวจสอบข้อมูลก่อนสร้าง Excel
+        if not data:
+            return {"data": [], "excel_path": None}
+
+        # ✅ สร้างไฟล์ Excel
+        filename = f"{uuid.uuid4()}.xlsx"
+        filepath = f"temp/{filename}"
+        os.makedirs("temp", exist_ok=True)
+
+        workbook = xlsxwriter.Workbook(filepath)
+        worksheet = workbook.add_worksheet()
+        headers = list(data[0].keys())
+
+        for col, h in enumerate(headers):
+            worksheet.write(0, col, h)
+        for row_idx, row in enumerate(data, start=1):
+            for col, h in enumerate(headers):
+                worksheet.write(row_idx, col, row.get(h, ""))
+        workbook.close()
+
+        return {"data": data, "excel_path": f"/download-excel/{filename}"}
     except Exception as e:
+        print("❌ ERROR:", str(e))  # เพิ่ม logging
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/download-excel/{filename}")
+def download_excel(filename: str):
+    file_path = f"temp/{filename}"
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename=filename)
+    raise HTTPException(status_code=404, detail="File not found")
