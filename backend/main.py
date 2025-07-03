@@ -204,12 +204,12 @@ def search_tran(
 
 class TranDetailRequest(BaseModel):
     ids: List[str]
-    type: str  # "TRANSACTION_ID" or "REF_TRANSACTION_ID"
+    type: str  # "TRANSACTION_ID" or "REF_TRANSACTION_ID" or "INVOICE_NO"
 
 @app.post("/search-tran-detail")
 def search_tran_detail(req: TranDetailRequest):
     try:
-        if req.type not in ["TRANSACTION_ID", "REF_TRANSACTION_ID"]:
+        if req.type not in ["TRANSACTION_ID", "REF_TRANSACTION_ID", "INVOICE_NO"]:
             raise HTTPException(status_code=400, detail="Invalid type.")
         
         print("🔍 Request Type:", req.type)

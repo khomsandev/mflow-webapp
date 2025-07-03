@@ -516,7 +516,8 @@ def fetch_tran_details(ids: List[str], id_type: str):
         WITH combined_invoices AS (
         SELECT 
             mi2.REF_TRANSACTION_ID,
-            mi1.TRANSACTION_ID,       
+            mi1.TRANSACTION_ID,
+            mi.INVOICE_NO,       
             TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
             mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
             V.DESCRIPTION AS "จังหวัด",  
@@ -550,7 +551,8 @@ def fetch_tran_details(ids: List[str], id_type: str):
         UNION ALL
         SELECT 
             mi2.REF_TRANSACTION_ID,
-            mi1.TRANSACTION_ID,        
+            mi1.TRANSACTION_ID,
+            mi.INVOICE_NO,     
             TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
             mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
             V.DESCRIPTION AS "จังหวัด",  

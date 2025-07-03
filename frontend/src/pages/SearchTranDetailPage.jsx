@@ -38,6 +38,7 @@ export default function SearchTranDetailPage() {
         >
           <option value="TRANSACTION_ID">TRANSACTION_ID</option>
           <option value="REF_TRANSACTION_ID">REF_TRANSACTION_ID</option>
+          <option value="INVOICE_NO">INVOICE_NO</option>
         </select>
       </div>
 

@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   backend:
     build:
       context: ./backend
@@ -10,6 +11,8 @@ services:
     env_file:
       - .env
     restart: always
+    depends_on:
+      - db
 
   frontend:
     build:
@@ -18,3 +21,5 @@ services:
     ports:
       - "80:80"
     restart: always
+    depends_on:
+      - backend
