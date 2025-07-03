@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import ResultTable from "../components/ResultTable";
 import { API_BASE_URL } from '../config';
+import ExcelJS from "exceljs";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { HardDriveDownload, 
@@ -42,23 +43,50 @@ export default function CarBalanceResultPage() {
     if (customer_id) fetchData();
   }, [customer_id]);
 
-  const exportToExcel = () => {
+
+    const exportToExcel = async () => {
     if (!result || result.length === 0) {
       alert("ไม่มีข้อมูลสำหรับ Export");
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(result);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "CarBalance");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("CarBalance");
 
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], {
+    const keys = Object.keys(result[0]);
+
+    worksheet.addRow(keys);
+    result.forEach((row) => {
+      worksheet.addRow(keys.map((key) => row[key]));
+    });
+
+    // Set header style
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF1F4E78" },
+      };
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    const filename = `car_balance_${customer_id}.xlsx`;
-    saveAs(data, filename);
+    // Generate date string for filename
+    // ตัวอย่าง: 20250703 สำหรับวันที่ 3 กรกฎาคม 2025
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const dateStr = `${yyyy}${mm}${dd}`; // เช่น 20250703
+
+    // Save the file with customer_id and date in the filename
+    // ตัวอย่าง: car_balance_C20220324213075353_20250703.xlsx
+    saveAs(blob, `car_balance_${customer_id}_${dateStr}.xlsx`);
   };
 
   return (

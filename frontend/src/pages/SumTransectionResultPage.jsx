@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ResultTable from "../components/ResultTable";
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, API_KEY, FILE_SERVICE_URL } from "../config";
 import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import { HardDriveDownload, 
-        ArrowBigLeft,
-        ChevronsLeft,
-        ChevronLeft,
-        ChevronRight,
-        ChevronsRight,
+import {
+  HardDriveDownload,
+  ArrowBigLeft,
+  ChevronsLeft,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsRight,
 } from "lucide-react";
 
 export default function SumTransectionResultPage() {
+  // ──────────────────────── State ─────────────────────────
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const customerId = searchParams.get("customer_id");
@@ -28,6 +31,7 @@ export default function SumTransectionResultPage() {
   const totalPages = Math.ceil(result.length / itemsPerPage);
   const offset = (currentPage - 1) * itemsPerPage;
 
+  // ──────────────────────── Helpers ─────────────────────────
   const formatDateToThai = (isoDate) => {
     if (!isoDate) return "-";
     const date = new Date(isoDate);
@@ -37,10 +41,17 @@ export default function SumTransectionResultPage() {
     return `${day}/${month}/${yearBE}`;
   };
 
+  // ──────────────────────── Fetch summary ─────────────────────────
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/summary-tran?customer_id=${customerId}&start_date=${startDate}&end_date=${endDate}`);
+        const res = await fetch(
+          `${API_BASE_URL}/summary-tran?customer_id=${customerId}&start_date=${startDate}&end_date=${endDate}`,
+          {
+            headers: { "x-api-key": API_KEY },
+          }
+        );
+        if (!res.ok) throw new Error("Network response was not ok");
         const data = await res.json();
         setResult(data.data || []);
       } catch (err) {
@@ -54,26 +65,57 @@ export default function SumTransectionResultPage() {
     if (customerId && startDate && endDate) fetchSummary();
   }, [customerId, startDate, endDate]);
 
-  const exportToExcel = () => {
+  // ──────────────────────── Export to Excel ─────────────────────────
+  const exportToExcel = async () => {
     if (!result || result.length === 0) {
       alert("ไม่มีข้อมูลให้ดาวน์โหลด");
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(result);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "SumTransection");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("SumTransection");
 
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const dataBlob = new Blob([excelBuffer], {
-      type: "application/octet-stream",
+    const columns = Object.keys(result[0] || {}).concat("RECEIPT_LINK");
+    worksheet.columns = columns.map((col) => ({ header: col, key: col }));
+
+     worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF1F4E78" },
+      };
     });
 
-    saveAs(dataBlob, `SumTransection_${customerId}_${startDate}_to_${endDate}.xlsx`);
+    result.forEach((item) => {
+      const row = worksheet.addRow({
+        ...item,
+        RECEIPT_LINK: {
+          text: "Download",
+          hyperlink: `${FILE_SERVICE_URL}${item.receipt_file_id}?key=${API_KEY}`,
+        },
+      });
+
+      const receiptCell = row.getCell("RECEIPT_LINK");
+      receiptCell.font = {
+        color: { argb: "FF1F4E78" },
+        underline: true,
+      };
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(
+      new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      `SumTransection_${customerId}_${startDate}_to_${endDate}.xlsx`
+    );
   };
 
+  // ──────────────────────── Render ─────────────────────────
   return (
     <div className="max-w-full mx-auto mt-10 p-4">
+      {/* หัวข้อ */}
       <h2 className="text-3xl font-semibold mb-4">
         รายการผ่านทาง
         {result.length > 0 && result[0].company_name && (
@@ -81,12 +123,33 @@ export default function SumTransectionResultPage() {
         )}
       </h2>
 
+      {/* ช่วงวันที่ */}
       {startDate && endDate && (
         <p className="text-black mb-4 text-xl">
           ระหว่างวันที่ {formatDateToThai(startDate)} ถึง {formatDateToThai(endDate)}
         </p>
       )}
 
+      {/* ปุ่ม action */}
+      <div className="mb-4 flex gap-2">
+        <button
+          onClick={() => navigate("/sum-transection")}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          <ArrowBigLeft className="w-6 h-6" />
+          ย้อนกลับ
+        </button>
+
+        <button
+          onClick={exportToExcel}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          <HardDriveDownload className="w-5 h-5" />
+          ดาวน์โหลด Excel
+        </button>
+      </div>
+
+      {/* เนื้อหา */}
       {loading ? (
         <div className="flex flex-col items-center justify-center mt-10 gap-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -94,70 +157,48 @@ export default function SumTransectionResultPage() {
         </div>
       ) : (
         <>
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={() => navigate("/sum-transection")}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              <ArrowBigLeft className="w-6 h-6" />
-              ย้อนกลับ
-            </button>
-
-            <button
-              onClick={exportToExcel}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              <HardDriveDownload className="w-5 h-5" />
-              ดาวน์โหลด Excel
-            </button>
-          </div>
-
           {result.length > 0 ? (
-          <>
-            <ResultTable
-              data={result.slice(offset, offset + itemsPerPage)}
-              offset={offset}
-            />
+            <>
+              {/* ตารางผลลัพธ์ */}
+              <ResultTable data={result.slice(offset, offset + itemsPerPage)} offset={offset} />
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center mt-6 gap-2">
-                {/* หน้าแรก */}
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className="p-2 bg-gray-200 rounded disabled:opacity-50"
-                >
-                  <ChevronsLeft className="w-5 h-5" />
-                </button>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6 gap-2">
+                  {/* หน้าแรก */}
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="p-2 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    <ChevronsLeft className="w-5 h-5" />
+                  </button>
 
-                {/* ก่อนหน้า */}
-                <button
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
-                  disabled={currentPage === 1}
-                  className="p-2 bg-gray-200 rounded disabled:opacity-50"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
+                  {/* ก่อนหน้า */}
+                  <button
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                    disabled={currentPage === 1}
+                    className="p-2 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
 
-                {/* หน้าปัจจุบัน */}
-                <span className="px-2 py-1">
-                  หน้า {currentPage} จาก {totalPages}
-                </span>
+                  {/* หน้าปัจจุบัน */}
+                  <span className="px-2 py-1">หน้า {currentPage} จาก {totalPages}</span>
 
-                {/* ถัดไป */}
-                <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  disabled={currentPage === totalPages}
-                  className="p-2 bg-gray-200 rounded disabled:opacity-50"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+                  {/* ถัดไป */}
+                  <button
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-2 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
 
-                {/* หน้าสุดท้าย */}
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
+                  {/* หน้าสุดท้าย */}
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
                   className="p-2 bg-gray-200 rounded disabled:opacity-50"
                 >
                   <ChevronsRight className="w-5 h-5" />
