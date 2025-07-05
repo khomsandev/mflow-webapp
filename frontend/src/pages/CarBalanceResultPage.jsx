@@ -123,6 +123,10 @@ export default function CarBalanceResultPage() {
             </button>
           </div>
 
+          <p className="mt-4 text-sm text-gray-600">
+            พบทั้งหมด {result.length.toLocaleString()} รายการ
+          </p>
+
           {result.length > 0 ? (
             <>
               <ResultTable

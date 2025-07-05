@@ -33,6 +33,24 @@ export default function TranillegalResultPage() {
   });
 };
 
+  // ปิด zoom เมื่อกด Escape
+  // ใช้ useEffect เพื่อเพิ่ม event listener สำหรับ Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeZoom();
+      }
+    };
+
+    if (zoomImageUrl) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [zoomImageUrl]);
+
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -95,6 +113,10 @@ export default function TranillegalResultPage() {
               ย้อนกลับ
           </button>
       </div>
+
+      <p className="mt-4 text-sm text-gray-600">
+        พบทั้งหมด {results.length.toLocaleString()} รายการ
+      </p>
 
       {loading ? (
         // Loading Spinner สำหรับโหลดข้อมูลตาราง
@@ -167,9 +189,6 @@ export default function TranillegalResultPage() {
             </tbody>
           </table>
 
-          <p className="mt-4 text-sm text-gray-600">
-            พบทั้งหมด {results.length.toLocaleString()} รายการ
-          </p>
 
           {/* Pagination Controls */}
           {totalPages > 1 && (

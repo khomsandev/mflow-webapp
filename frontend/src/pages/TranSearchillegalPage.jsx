@@ -45,29 +45,38 @@ export default function TranSearchIllegalPage() {
           ตรวจสอบการผ่านทางที่ผิดกฎหมาย
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="startDate" className="block text-gray-700 text-sm font-semibold mb-1">
+        <div className="grid grid-cols-1 gap-1 mb-4">
+          <label className="block text-gray-700 text-md font-semibold mb-1">
+            ช่วงวันที่ผ่านทาง <span className="text-red-500 font-bold">*</span>
+          </label>
+
+          <div className="flex gap-4">
+            <div className="flex-1 flex flex-col">
+              <label htmlFor="startdate-input" className="text-gray-700 text-sm font-semibold mb-1">
                 วันที่เริ่มต้น
               </label>
               <input
                 type="date"
+                id="startdate-input"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="p-2 border rounded w-full"
               />
             </div>
-            <div>
-              <label htmlFor="endDate" className="block text-gray-700 text-sm font-semibold mb-1">
+
+            <div className="flex-1 flex flex-col">
+              <label htmlFor="enddate-input" className="text-gray-700 text-sm font-semibold mb-1">
                 วันที่สิ้นสุด
               </label>
               <input
                 type="date"
+                id="enddate-input"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="p-2 border rounded w-full"
               />
             </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -133,22 +142,10 @@ export default function TranSearchIllegalPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* <div>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="p-2 border rounded w-full"
-            >
-              <option value="">-- เลือกสถานะ --</option>
-              <option value="PAYMENT_SUCCESS">PAYMENT_SUCCESS</option>
-              <option value="PAYMENT_WAITING">PAYMENT_WAITING</option>
-              <option value="PAYMENT_FAILED">PAYMENT_FAILED</option>
-              <option value="PAYMENT_INPROGRESS">PAYMENT_INPROGRESS</option>
-              <option value="BATCH_PROCESSING">BATCH_PROCESSING</option>
-            </select>
-          </div> */}
-          
           <div>
+            <label className="block text-gray-700 text-sm font-semibold mb-1">
+              ด่าน
+            </label>
             <select
               value={plaza}
               onChange={(e) => setPlaza(e.target.value)}

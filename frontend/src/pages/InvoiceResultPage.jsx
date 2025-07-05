@@ -66,22 +66,24 @@ export default function InvoiceResultPage() {
 
   const handleDownloadZip = async () => {
     try {
-      const fileIds = result
-        .filter((item) => item.e_bill_file_id)
-        .map((item) => item.e_bill_file_id);
+      // 1) ดึงเฉพาะ e_bill_file_id ที่มีค่า
+      const allFileIds = result
+        .filter(item => item.e_bill_file_id)
+        .map(item => item.e_bill_file_id);
+
+      // 2) ตัดค่าซ้ำด้วย Set แล้วแปลงกลับเป็น array
+      const fileIds = [...new Set(allFileIds)];
 
       if (fileIds.length === 0) {
         alert("ไม่มี E-Bill File ID สำหรับดาวน์โหลด");
         return;
       }
 
-      // *** เริ่มต้นการดาวน์โหลด: ตั้งค่า isDownloading เป็น true ***
-      setIsDownloading(true);
-
+      setIsDownloading(true);           // เริ่มแสดง overlay
       const res = await fetch(`${API_BASE_URL}/download-zip`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fileIds), // ส่ง array ของ string ไปโดยตรง
+        body: JSON.stringify(fileIds),  // ส่งเฉพาะรายการไม่ซ้ำ
       });
 
       if (!res.ok) {
@@ -90,28 +92,30 @@ export default function InvoiceResultPage() {
       }
 
       const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "e-bill-files.zip"; // กำหนดชื่อไฟล์ ZIP ที่ดาวน์โหลด
-      document.body.appendChild(a);
+      a.download = "e-bill-files.zip";
       a.click();
       a.remove();
-      window.URL.revokeObjectURL(url); // ปล่อย object URL เพื่อหลีกเลี่ยง memory leaks
-      alert("ดาวน์โหลดไฟล์ ZIP สำเร็จ!"); // เพิ่มการแจ้งเตือนเมื่อสำเร็จ
-
+      URL.revokeObjectURL(url);
+      alert("ดาวน์โหลดไฟล์ ZIP สำเร็จ!");
     } catch (err) {
       console.error("Download error:", err);
-      alert(`เกิดข้อผิดพลาดในการดาวน์โหลด ZIP: ${err.message || err}`); // แสดงข้อความ error ที่ชัดเจนขึ้น
+      alert(`เกิดข้อผิดพลาดในการดาวน์โหลด ZIP: ${err.message || err}`);
     } finally {
-      // *** สิ้นสุดการดาวน์โหลด: ตั้งค่า isDownloading เป็น false เสมอ ***
-      setIsDownloading(false);
+      setIsDownloading(false);          // ปิด overlay ไม่ว่า success/error
     }
   };
 
+  const firstRow = result .length > 0 ? result [0] : null;
+  const licensePlate = firstRow ? `${firstRow.license} ${firstRow.province}` : "-";
+
   return (
     <div className="max-w-full mx-auto mt-10 p-4">
-      <h2 className="text-2xl font-semibold mb-4">ใบแจ้งหนี้ ({memberType})</h2>
+      <h2 className="text-2xl font-semibold mb-4">
+        ใบแจ้งหนี้ ({memberType}) : <span className="text-blue-600 font-semibold">{licensePlate}</span>
+      </h2>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <button
@@ -141,6 +145,10 @@ export default function InvoiceResultPage() {
         </button>
       </div>
 
+      <p className="mt-4 text-sm text-gray-600">
+        พบทั้งหมด {result.length.toLocaleString()} รายการ
+      </p>
+
       {loading ? (
         // Loading Spinner สำหรับโหลดข้อมูลตาราง
         <div className="flex flex-col items-center justify-center mt-10 gap-4">
@@ -152,9 +160,11 @@ export default function InvoiceResultPage() {
           <table className="min-w-full border border-gray-300 rounded shadow-sm text-sm">
             <thead className="bg-gray-100 text-left">
               <tr>
-                {/* <th className="px-3 py-2 border">No.</th> */}
+                <th className="px-3 py-2 border">No.</th>
                 <th className="px-3 py-2 border">E-Bill File ID</th>
                 <th className="px-3 py-2 border">Invoice No</th>
+                <th className="px-3 py-2 border">ป้ายทะเบียน</th>
+                <th className="px-3 py-2 border">จังหวัด</th>
                 <th className="px-3 py-2 border">วันที่ผ่านทาง</th>
                 <th className="px-3 py-2 border">Invoice Ref</th>
                 <th className="px-3 py-2 border">สถานะ</th>
@@ -166,7 +176,7 @@ export default function InvoiceResultPage() {
               </tr>
             </thead>
             <tbody>
-              {result.slice(offset, offset + itemsPerPage).map((row) => {
+              {result.slice(offset, offset + itemsPerPage).map((row, index) => {
                 let formattedDate = "-";
                 if (row.transaction_date) {
                   // Create a Date object from the transaction_date string
@@ -187,15 +197,19 @@ export default function InvoiceResultPage() {
                 }
 
                 let invoiceTypeLabel = "-";
+                let invoiceTypeClass = "text-gray-500"; // ค่า default
+
                 if (row.invoice_type === 0 || row.invoice_type === "0") {
                   invoiceTypeLabel = "ไม่มีค่าปรับ";
+                  invoiceTypeClass = "text-green-600 font-medium";
                 } else if (row.invoice_type === 1 || row.invoice_type === "1") {
                   invoiceTypeLabel = "มีค่าปรับ";
+                  invoiceTypeClass = "text-red-600 font-medium";
                 }
-
+                
                 return (
-                  <tr key={row.invoice_no} className="hover:bg-gray-50">
-                    {/* <td className="px-3 py-1 border text-center">{offset + index + 1}</td> */}
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-3 py-1 border text-center">{offset + index + 1}</td>
                     <td className="px-3 py-1 border">
                       {row.e_bill_file_id ? (
                         <a
@@ -211,12 +225,16 @@ export default function InvoiceResultPage() {
                       )}
                     </td>
                     <td className="px-3 py-1 border">{row.invoice_no}</td>
+                    <td className="px-3 py-1 border">{row.license}</td>
+                    <td className="px-3 py-1 border">{row.province}</td>
                     <td className="px-3 py-1 border">{formattedDate}</td>
                     <td className="px-3 py-1 border">{row.invoice_no_ref || "-"}</td>
                     <td className={`px-3 py-1 border font-medium ${statusColor(row.status)}`}>
                       {row.status}
                     </td>
-                    <td className="px-3 py-1 border">{invoiceTypeLabel}</td>
+                    <td className={`px-3 py-1 border text-center ${invoiceTypeClass}`}>
+                      {invoiceTypeLabel}
+                    </td>
                     <td className="px-3 py-1 border text-right">
                       {row.fee_amount?.toLocaleString()}
                     </td>
@@ -234,10 +252,6 @@ export default function InvoiceResultPage() {
               })}
             </tbody>
           </table>
-
-          <p className="mt-4 text-sm text-gray-600">
-            พบทั้งหมด {result.length.toLocaleString()} รายการ
-          </p>
 
           {/* Pagination Controls */}
           {totalPages > 1 && (

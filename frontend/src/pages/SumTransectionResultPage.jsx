@@ -149,6 +149,10 @@ export default function SumTransectionResultPage() {
         </button>
       </div>
 
+      <p className="mt-4 text-sm text-gray-600">
+        พบทั้งหมด {result.length.toLocaleString()} รายการ
+      </p>
+
       {/* เนื้อหา */}
       {loading ? (
         <div className="flex flex-col items-center justify-center mt-10 gap-4">

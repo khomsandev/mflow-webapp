@@ -169,21 +169,31 @@ def get_summary_by_customer_id_and_date(customer_id, start_date, end_date):
     return [dict(zip(columns, row)) for row in rows]
 
 # ✅ ฟังก์ชันค้นหา Invoice Member
-def search_member_invoices(plate1, plate2, province, invoice_no, status, start_date, end_date):
+def search_member_invoices(plate1, plate2, province, invoice_no, customer_id, status, start_date, end_date):
+    if not start_date or not end_date:
+        raise ValueError("กรุณาระบุ start_date และ end_date")
+
     conn = get_connection()
     cursor = conn.cursor()
 
     query = """
-        SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
-               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+		SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, b.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
                a.DISCOUNT, a.TOTAL_AMOUNT
         FROM INVOICE_SERVICE.MF_INVOICE a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
         WHERE a.DELETE_FLAG = 0
           AND a.FEE_AMOUNT > 0
           AND a.INVOICE_TYPE != '3'
+          AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date
     """
-    params = {}
+    params = {
+        "start_date": start_date.strip(),
+        "end_date": end_date.strip(),
+    }
+
     if plate1:
         query += " AND a.PLATE1 = :plate1"
         params["plate1"] = plate1.strip()
@@ -196,13 +206,12 @@ def search_member_invoices(plate1, plate2, province, invoice_no, status, start_d
     if invoice_no:
         query += " AND a.INVOICE_NO = :invoice_no"
         params["invoice_no"] = invoice_no.strip()
+    if customer_id:
+        query += " AND a.CUSTOMER_ID = :customer_id"
+        params["customer_id"] = customer_id.strip()
     if status:
         query += " AND a.STATUS = :status"
         params["status"] = status.strip()
-    if start_date and end_date:
-        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
-        params["start_date"] = start_date.strip()
-        params["end_date"] = end_date.strip()
 
     query += " ORDER BY b.TRANSACTION_DATE DESC"
 
@@ -213,21 +222,31 @@ def search_member_invoices(plate1, plate2, province, invoice_no, status, start_d
 
 # ✅ ฟังก์ชันค้นหา Invoice NonMember
 def search_nonmember_invoices(plate1, plate2, province, invoice_no, status, start_date, end_date):
+    if not start_date or not end_date:
+        raise ValueError("กรุณาระบุ start_date และ end_date")
+
     conn = get_connection()
     cursor = conn.cursor()
 
     query = """
-        SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
-               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+		SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.FINE_AMOUNT, 
+               a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
                a.DISCOUNT, a.TOTAL_AMOUNT
         FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER b ON a.INVOICE_NO = b.INVOICE_NO
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
         WHERE a.DELETE_FLAG = 0
           AND a.FEE_AMOUNT > 0
           AND a.INVOICE_TYPE != '3'
+          AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date
     """
 
-    params = {}
+    params = {
+        "start_date": start_date.strip(),
+        "end_date": end_date.strip(),
+    }
+
     if plate1:
         query += " AND a.PLATE1 = :plate1"
         params["plate1"] = plate1.strip()
@@ -243,10 +262,6 @@ def search_nonmember_invoices(plate1, plate2, province, invoice_no, status, star
     if status:
         query += " AND a.STATUS = :status"
         params["status"] = status.strip()
-    if start_date and end_date:
-        query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
-        params["start_date"] = start_date.strip()
-        params["end_date"] = end_date.strip()
 
     query += " ORDER BY b.TRANSACTION_DATE DESC"
 
@@ -255,7 +270,6 @@ def search_nonmember_invoices(plate1, plate2, province, invoice_no, status, star
     columns = [col[0].lower() for col in cursor.description]
     return [dict(zip(columns, row)) for row in rows]
 
-
 # ✅ ฟังก์ชันค้นหาใบเสร็จรับเงิน Member
 def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_date):
     conn = get_connection()
@@ -263,16 +277,19 @@ def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_
 
     query = """
         SELECT a.RECEIPT_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
-               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.STATUS, a.INVOICE_TYPE, b.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
                a.DISCOUNT, a.TOTAL_AMOUNT
         FROM INVOICE_SERVICE.MF_INVOICE a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
         WHERE a.DELETE_FLAG = 0
             AND a.FEE_AMOUNT > 0
             AND a.INVOICE_TYPE != '3'
             AND a.STATUS = 'PAYMENT_SUCCESS'
     """
     params = {}
+
     if plate1:
         query += " AND a.PLATE1 = :plate1"
         params["plate1"] = plate1.strip()
@@ -282,13 +299,13 @@ def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_
     if province:
         query += " AND a.PROVINCE = :province"
         params["province"] = province.strip()
-    if invoice_no:
-        query += " AND a.INVOICE_NO = :invoice_no"
-        params["invoice_no"] = invoice_no.strip()
     if start_date and end_date:
         query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
         params["start_date"] = start_date.strip()
         params["end_date"] = end_date.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
 
     query += " ORDER BY b.TRANSACTION_DATE DESC"
 
@@ -304,16 +321,19 @@ def search_nonmember_receipt(plate1, plate2, province, invoice_no, start_date, e
 
     query = """
         SELECT a.RECEIPT_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
-               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
+               a.STATUS, a.INVOICE_TYPE, a.FEE_AMOUNT, a.FINE_AMOUNT, 
+               a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
                a.DISCOUNT, a.TOTAL_AMOUNT
         FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER b ON a.INVOICE_NO = b.INVOICE_NO
+        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
         WHERE a.DELETE_FLAG = 0
             AND a.FEE_AMOUNT > 0
             AND a.INVOICE_TYPE != '3'
             AND a.STATUS = 'PAYMENT_SUCCESS'
     """
     params = {}
+
     if plate1:
         query += " AND a.PLATE1 = :plate1"
         params["plate1"] = plate1.strip()
@@ -323,13 +343,13 @@ def search_nonmember_receipt(plate1, plate2, province, invoice_no, start_date, e
     if province:
         query += " AND a.PROVINCE = :province"
         params["province"] = province.strip()
-    if invoice_no:
-        query += " AND a.INVOICE_NO = :invoice_no"
-        params["invoice_no"] = invoice_no.strip()
     if start_date and end_date:
         query += " AND TO_CHAR(b.TRANSACTION_DATE, 'YYYY-MM-DD') BETWEEN :start_date AND :end_date"
         params["start_date"] = start_date.strip()
         params["end_date"] = end_date.strip()
+    if invoice_no:
+        query += " AND a.INVOICE_NO = :invoice_no"
+        params["invoice_no"] = invoice_no.strip()
 
     query += " ORDER BY b.TRANSACTION_DATE DESC"
 
@@ -340,6 +360,9 @@ def search_nonmember_receipt(plate1, plate2, province, invoice_no, start_date, e
 
 # ✅ ฟังก์ชันตรวจสอบรายการผ่านทาง Member
 def get_tran_member(start_date, end_date, plate1, plate2, province, status, plaza):
+    if not start_date or not end_date:
+        raise ValueError("กรุณาระบุ start_date และ end_date")
+    
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -398,6 +421,9 @@ def get_tran_member(start_date, end_date, plate1, plate2, province, status, plaz
 
 # ✅ ฟังก์ชันตรวจสอบรายการผ่านทาง Nonmember
 def get_tran_nonmember(start_date, end_date, plate1, plate2, province, status, plaza):
+    if not start_date or not end_date:
+        raise ValueError("กรุณาระบุ start_date และ end_date")
+    
     conn = get_connection()
     cursor = conn.cursor()
 

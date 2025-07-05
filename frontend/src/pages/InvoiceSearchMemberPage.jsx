@@ -4,13 +4,14 @@ import provincesData from "../data/provinces.json";
 
 export default function InvoiceSearchMemberPage() {
   const navigate = useNavigate();
-  // const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const [plate1, setPlate1] = useState("");
   const [plate2, setPlate2] = useState("");
   const [invoiceNo, setInvoiceNo] = useState("");
+  const [customerID, setCustomerID] = useState("");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(today);
 
   // *** เพิ่ม States สำหรับ Dropdown จังหวัด ***
   const [province, setProvince] = useState("");
@@ -31,6 +32,7 @@ export default function InvoiceSearchMemberPage() {
     if (plate2) params.append("plate2", plate2);
     if (province) params.append("province", province);
     if (invoiceNo) params.append("invoice_no", invoiceNo);
+    if (customerID) params.append("customer_id", customerID);
     if (status) params.append("status", status);
     if (startDate) params.append("start_date", startDate);
     if (endDate) params.append("end_date", endDate);
@@ -42,6 +44,40 @@ export default function InvoiceSearchMemberPage() {
     <div className="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
       <div className="max-w-3xl mx-auto p-4">
         <h2 className="text-2xl font-bold mb-6">ค้นหาใบแจ้งหนี้ (สมาชิก)</h2>
+
+        <div className="grid grid-cols-1 gap-1 mb-4">
+          <label className="block text-gray-700 text-md font-semibold mb-1">
+            ช่วงวันที่ผ่านทาง <span className="text-red-500 font-bold">*</span>
+          </label>
+
+          <div className="flex gap-4">
+            <div className="flex-1 flex flex-col">
+              <label htmlFor="startdate-input" className="text-gray-700 text-sm font-semibold mb-1">
+                เริ่มต้น
+              </label>
+              <input
+                type="date"
+                id="startdate-input"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="p-2 border rounded w-full"
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col">
+              <label htmlFor="enddate-input" className="text-gray-700 text-sm font-semibold mb-1">
+                สิ้นสุด
+              </label>
+              <input
+                type="date"
+                id="enddate-input"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="p-2 border rounded w-full"
+              />
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
@@ -105,15 +141,36 @@ export default function InvoiceSearchMemberPage() {
           
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-2 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 mb-4">
+          <label htmlFor="customerid-input" className="block text-gray-700 text-sm font-semibold mb-1">
+              หมายเลขสมาชิก
+            </label>
+          <input
+            type="text"
+            value={customerID}
+            onChange={(e) => setCustomerID(e.target.value)}
+            placeholder="หมายเลขสมาชิก"
+            className="p-2 border rounded w-full"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-1 mb-4">
+          <label htmlFor="invoiceno-input" className="block text-gray-700 text-sm font-semibold mb-1">
+            เลขที่ใบแจ้งหนี้
+          </label>
           <input
             type="text"
             value={invoiceNo}
             onChange={(e) => setInvoiceNo(e.target.value)}
-            placeholder="เลข Invoice"
-            className="p-2 border rounded"
+            placeholder="เลขที่ใบแจ้งหนี้"
+            className="p-2 border rounded w-full"
           />
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-1 mb-4">
+          <label htmlFor="status-select" className="block text-gray-700 text-sm font-semibold mb-1">
+            สถานะการชำระเงิน
+          </label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -125,24 +182,6 @@ export default function InvoiceSearchMemberPage() {
             <option value="PAYMENT_SUCCESS">PAYMENT_SUCCESS</option>
             <option value="PAYMENT_FAILED">PAYMENT_FAILED</option>
           </select>
-
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-4">
-          <div className="flex gap-2">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 border rounded w-full"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 border rounded w-full"
-            />
-          </div>
         </div>
 
         <div className="flex justify-end">

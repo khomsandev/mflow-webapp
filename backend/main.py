@@ -113,6 +113,7 @@ def invoice_search(
     plate2: Optional[str] = None,
     province: Optional[str] = None,
     invoice_no: Optional[str] = None,
+    customer_id: Optional[str] = None,
     status: Optional[str] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
@@ -123,7 +124,7 @@ def invoice_search(
         if member_type_upper == "MEMBER":
             result = search_member_invoices(
                 plate1, plate2, province,
-                invoice_no, status, start_date, end_date
+                invoice_no, customer_id, status, start_date, end_date
             )
         elif member_type_upper == "NONMEMBER":
             result = search_nonmember_invoices(
