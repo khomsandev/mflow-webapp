@@ -180,7 +180,7 @@ def search_member_invoices(plate1, plate2, province, invoice_no, customer_id, st
 		SELECT a.E_BILL_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
                a.STATUS, a.INVOICE_TYPE, b.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
                a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
-               a.DISCOUNT, a.TOTAL_AMOUNT
+               a.DISCOUNT, a.TOTAL_AMOUNT, a.CUSTOMER_ID
         FROM INVOICE_SERVICE.MF_INVOICE a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
@@ -271,7 +271,7 @@ def search_nonmember_invoices(plate1, plate2, province, invoice_no, status, star
     return [dict(zip(columns, row)) for row in rows]
 
 # ✅ ฟังก์ชันค้นหาใบเสร็จรับเงิน Member
-def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_date):
+def search_member_receipt(plate1, plate2, province, invoice_no, customer_id, start_date, end_date):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -279,7 +279,7 @@ def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_
         SELECT a.RECEIPT_FILE_ID, b.TRANSACTION_DATE, a.INVOICE_NO, a.INVOICE_NO_REF,
                a.STATUS, a.INVOICE_TYPE, b.FEE_AMOUNT, a.COLLECTION_AMOUNT, 
                a.PLATE1 || ' ' || a. PLATE2 AS LICENSE, PRV.DESCRIPTION AS PROVINCE,
-               a.DISCOUNT, a.TOTAL_AMOUNT
+               a.DISCOUNT, a.TOTAL_AMOUNT, a.CUSTOMER_ID
         FROM INVOICE_SERVICE.MF_INVOICE a
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_MASTER_V_OFFICE PRV ON PRV.code = b.PROVINCE
@@ -306,6 +306,9 @@ def search_member_receipt(plate1, plate2, province, invoice_no, start_date, end_
     if invoice_no:
         query += " AND a.INVOICE_NO = :invoice_no"
         params["invoice_no"] = invoice_no.strip()
+    if customer_id:
+        query += " AND a.CUSTOMER_ID = :customer_id"
+        params["customer_id"] = customer_id.strip()
 
     query += " ORDER BY b.TRANSACTION_DATE DESC"
 

@@ -79,6 +79,8 @@ export default function InvoiceResultPage() {
         return;
       }
 
+      const firstCustomerId = result.length > 0 ? result[0].customer_id : "unknown";
+
       setIsDownloading(true);           // เริ่มแสดง overlay
       const res = await fetch(`${API_BASE_URL}/download-zip`, {
         method: "POST",
@@ -95,7 +97,7 @@ export default function InvoiceResultPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "e-bill-files.zip";
+      a.download = `e-bill_${firstCustomerId}.zip`;
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
@@ -108,14 +110,15 @@ export default function InvoiceResultPage() {
     }
   };
 
-  const firstRow = result .length > 0 ? result [0] : null;
-  const licensePlate = firstRow ? `${firstRow.license} ${firstRow.province}` : "-";
+  // const firstRow = result .length > 0 ? result [0] : null;
+  // const licensePlate = firstRow ? `${firstRow.license} ${firstRow.province}` : "-";
 
   return (
     <div className="max-w-full mx-auto mt-10 p-4">
       <h2 className="text-2xl font-semibold mb-4">
-        ใบแจ้งหนี้ ({memberType}) : <span className="text-blue-600 font-semibold">{licensePlate}</span>
+        ใบแจ้งหนี้ ({memberType})
       </h2>
+      {/* : <span className="text-blue-600 font-semibold">{licensePlate}</span> */}
 
       <div className="flex flex-wrap gap-2 mb-4">
         <button

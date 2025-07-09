@@ -148,6 +148,7 @@ def search_receipt(
     plate2: Optional[str] = None,
     province: Optional[str] = None,
     invoice_no: Optional[str] = None,
+    customer_id: Optional[str] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
 ):
@@ -157,7 +158,7 @@ def search_receipt(
         if member_type_upper == "MEMBER":
             result = search_member_receipt(
                 plate1, plate2, province,
-                invoice_no, start_date, end_date
+                invoice_no, customer_id, start_date, end_date
             )
         elif member_type_upper == "NONMEMBER":
             result = search_nonmember_receipt(

@@ -8,6 +8,7 @@ export default function ReceiptSearchMemberPage() {
   const [plate1, setPlate1] = useState("");
   const [plate2, setPlate2] = useState("");
   const [invoiceNo, setInvoiceNo] = useState("");
+  const [customerID, setCustomerID] = useState("");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
 
@@ -30,6 +31,7 @@ export default function ReceiptSearchMemberPage() {
     if (plate2) params.append("plate2", plate2);
     if (province) params.append("province", province);
     if (invoiceNo) params.append("invoice_no", invoiceNo);
+    if (customerID) params.append("customer_id", customerID);
     if (startDate) params.append("start_date", startDate);
     if (endDate) params.append("end_date", endDate);
 
@@ -134,6 +136,19 @@ export default function ReceiptSearchMemberPage() {
               )}
             </select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-1 mb-4">
+          <label htmlFor="customerid-input" className="block text-gray-700 text-sm font-semibold mb-1">
+              หมายเลขสมาชิก
+            </label>
+          <input
+            type="text"
+            value={customerID}
+            onChange={(e) => setCustomerID(e.target.value)}
+            placeholder="หมายเลขสมาชิก"
+            className="p-2 border rounded w-full"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-1 mb-4">

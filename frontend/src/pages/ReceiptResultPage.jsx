@@ -64,6 +64,7 @@ export default function ReceiptResultPage() {
     }
   };
 
+
   const handleDownloadZip = async () => {
     try {
       // ดึงเฉพาะ receipt_file_id ที่มีค่า แล้วตัดค่าซ้ำด้วย Set
@@ -78,6 +79,8 @@ export default function ReceiptResultPage() {
         return;
       }
 
+      const firstCustomerId = result.length > 0 ? result[0].customer_id : "unknown";
+      
       setIsDownloading(true); // เริ่มแสดง overlay
 
       const res = await fetch(`${API_BASE_URL}/download-zip`, {
@@ -95,7 +98,7 @@ export default function ReceiptResultPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "receipt-files.zip";
+      a.download = `receipt_${firstCustomerId}.zip`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -110,14 +113,15 @@ export default function ReceiptResultPage() {
     }
   };
 
-  const firstRow = result .length > 0 ? result [0] : null;
-  const licensePlate = firstRow ? `${firstRow.license} ${firstRow.province}` : "-";
+  // const firstRow = result .length > 0 ? result [0] : null;
+  // const licensePlate = firstRow ? `${firstRow.license} ${firstRow.province}` : "-";
 
   return (
     <div className="max-w-full mx-auto mt-10 p-4">
       <h2 className="text-2xl font-semibold mb-4">
-        ใบเสร็จรับเงิน ({memberType}) : <span className="text-blue-600 font-semibold">{licensePlate}</span>
+        ใบเสร็จรับเงิน ({memberType})
       </h2>
+      {/* : <span className="text-blue-600 font-semibold">{licensePlate}</span> */}
 
       <div className="flex flex-wrap gap-2 mb-4">
         <button
