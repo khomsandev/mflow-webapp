@@ -14,6 +14,7 @@ from db import get_tran_nonmember
 from db import get_tran_illegal
 from db import fetch_tran_details
 from typing import Optional, List, Dict
+from routers import reconcile
 
 
 from dotenv import load_dotenv
@@ -47,6 +48,10 @@ def cleanup_temp_folder():
             if now - os.path.getmtime(path) > 10:  # ใส่เป็นวินาที
                 os.remove(path)
 
+
+app.include_router(reconcile.router)
+
+
 @app.post("/download-zip")
 def download_ebill_zip(file_ids: List[str] = Body(...)):
     memory_file = io.BytesIO()
@@ -66,7 +71,6 @@ def download_ebill_zip(file_ids: List[str] = Body(...)):
     return StreamingResponse(memory_file, media_type="application/zip", headers={
         "Content-Disposition": "attachment; filename=ebill_files.zip"
     })
-
 
 @app.get("/check")
 def check_ref(ref_id: Optional[str] = None, last4: Optional[str] = None, date: Optional[str] = None):

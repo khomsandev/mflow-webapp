@@ -1,20 +1,16 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-  Car,
-  LayoutDashboard,
-  ArrowLeftRight,
-  Banknote,
-  Users,
-  ChevronDown,
-  ChevronUp,
-  FileSearch,
-  FileCheck2,
-  SquareCheck,
-  UserCheck,
-  UserX,
-  TriangleAlert,
-  Menu,
+  Car,LayoutDashboard,
+  ArrowLeftRight,Banknote,
+  Users,ChevronDown,
+  ChevronUp,FileSearch,
+  FileCheck2,SquareCheck,
+  UserCheck,UserX,
+  TriangleAlert,Menu,
+  QrCode,CreditCard,
+  Tag,Ticket,HandCoins,
+  CircleDollarSign,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -35,6 +31,7 @@ export default function Sidebar() {
   const [openInvoice, setOpenInvoice] = useState(false);
   const [OpenReceipt, setOpenReceipt] = useState(false);
   const [OpenTran, setOpenTran] = useState(false);
+  // const [openReconcile, setOpenReconcile] = useState(false);
 
   useEffect(() => {
     if (
@@ -62,6 +59,12 @@ export default function Sidebar() {
     ) {
       setOpenTran(true);
     }
+    // if(
+    //   location.pathname.startsWith("") ||
+    //   location.pathname.startsWith("")
+    // ) {
+    //   setOpenReconcile(true);
+    // }
   }, [location.pathname]);
 
   return (
@@ -134,7 +137,20 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* ตรวจสอบการชำระเงิน */}
+        {/* ตรวจสอบประวัติการชำระเงิน */}
+        <NavLink
+          to="/reconcile-search"
+          className={({ isActive }) =>
+            `flex items-center gap-2 px-3 py-2 rounded ${
+              isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+            }`
+          }
+        >
+          <HandCoins className="w-4 h-4" />
+          {!collapsed && "ตรวจสอบประวัติการชำระเงิน"}
+        </NavLink>
+
+        {/* ตรวจสอบสลิปการชำระเงิน */}
         <NavLink
           to="/ref-checker"
           className={({ isActive }) =>
@@ -144,7 +160,7 @@ export default function Sidebar() {
           }
         >
           <Banknote className="w-4 h-4" />
-          {!collapsed && "ตรวจสอบการชำระเงิน"}
+          {!collapsed && "ตรวจสอบสลิปการชำระเงิน"}
         </NavLink>
 
         {/* CustomerVIP */}

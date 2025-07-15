@@ -1,7 +1,9 @@
-import os
-import oracledb
 from typing import List
+import oracledb
 from dotenv import load_dotenv
+import os
+
+from reconcile_queries import CHANNEL_SQL_MAP
 
 # โหลด .env ที่อยู่ระดับโฟลเดอร์โปรเจกต์ (สมมติว่า .env อยู่ข้างนอกโฟลเดอร์ backend)
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
@@ -626,3 +628,24 @@ def fetch_tran_details(ids: List[str], id_type: str):
             print(f"❌ Batch failed at index {i}: {e}")
 
     return results
+
+# ✅ ฟังก์ชัน ตรวจสอบประวัติการชำระเงิน
+def get_reconcile(channel: str, ids: list[str]):
+    sql_template = CHANNEL_SQL_MAP.get(channel)
+    if sql_template is None:
+        raise ValueError(f"ไม่รองรับ channel: {channel}")
+
+    if not ids:
+        return []
+    if len(ids) > 1000:        # Oracle limit
+        raise ValueError("รองรับสูงสุด 1000 ID")
+
+    # ---------- สร้าง placeholders :1, :2, ... ----------
+    placeholders = ", ".join(f":{i+1}" for i in range(len(ids)))
+    sql = sql_template.format(placeholders=placeholders)
+
+    with get_connection() as conn, conn.cursor() as cur:
+        # ส่ง list/tuple ตรง ๆ  -> ใช้ positional bind
+        cur.execute(sql, ids)     # <-- สำคัญ: ไม่ต้อง dict
+        cols = [c[0].lower() for c in cur.description]
+        return [dict(zip(cols, row)) for row in cur.fetchall()]
