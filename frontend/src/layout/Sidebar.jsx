@@ -8,9 +8,7 @@ import {
   FileCheck2,SquareCheck,
   UserCheck,UserX,
   TriangleAlert,Menu,
-  QrCode,CreditCard,
-  Tag,Ticket,HandCoins,
-  CircleDollarSign,
+  Camera,HandCoins,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -275,6 +273,19 @@ export default function Sidebar() {
         >
           <ArrowLeftRight className="w-4 h-4" />
           {!collapsed && "ค้นหา Transection Detail"}
+        </NavLink>
+
+        {/* ค้นหารูปภาพการลงทะเบียน */}
+        <NavLink
+          to="/search-img-regis"
+          className={({ isActive }) =>
+            `flex items-center gap-2 px-3 py-2 rounded ${
+              isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+            }`
+          }
+        >
+          <Camera className="w-4 h-4" />
+          {!collapsed && "ค้นหารูปภาพการลงทะเบียน"}
         </NavLink>
         
 

@@ -649,3 +649,82 @@ def get_reconcile(channel: str, ids: list[str]):
         cur.execute(sql, ids)     # <-- สำคัญ: ไม่ต้อง dict
         cols = [c[0].lower() for c in cur.description]
         return [dict(zip(cols, row)) for row in cur.fetchall()]
+    
+# ✅ ฟังก์ชันตรวจสอบข้อมูลรถ
+def search_car(plate1, plate2, province):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT * 
+        FROM CUSTOMER_SERVICE.MF_CUST_VEHICLE_INFO a 
+        WHERE
+    """
+    params = {}
+    if plate1:
+        query += " a.PLATE1 = :plate1"
+        params["plate1"] = plate1.strip()
+    if plate2:
+        query += " AND a.PLATE2 = :plate2"
+        params["plate2"] = plate2.strip()
+    if province:
+        query += " AND a.PROVINCE = :province"
+        params["province"] = province.strip()
+
+    query += " ORDER BY a.CREATE_DATE DESC"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    columns = [col[0].lower() for col in cursor.description]
+
+    return [dict(zip(columns, row)) for row in rows]
+    
+# ✅ ฟังก์ชันตรวจสอบข้อมูลรูปภาพลงทะเบียนสมาชิก
+def search_images_register(car_id, customer_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # รูปภาพรถ
+    query_img_car = """
+        SELECT FILE_ID, TYPE, FILE_TYPE
+        FROM CUSTOMER_SERVICE.MF_CUST_VEHICLE_INFO_FILE
+        WHERE DELETE_FLAG ='0' 
+    """
+    params_img_car = {}
+    if car_id:
+        query_img_car += " AND VEHICLE_INFO_ID = :car_id"
+        params_img_car["car_id"] = str(car_id).strip()
+    cursor.execute(query_img_car, params_img_car) 
+    rows_img_car = cursor.fetchall()
+    columns_img_car = [col[0].lower() for col in cursor.description]
+
+
+    # ข้อมูล ผชท
+    query_customer = """
+        SELECT * FROM CUSTOMER_SERVICE.MF_CUST_INFO mci WHERE CUSTOMER_ID = :customer_id
+    """
+    params_customer = {}
+    if customer_id:
+        params_customer["customer_id"] = customer_id.strip()
+    query_customer += " ORDER BY CREATE_DATE DESC"    
+    cursor.execute(query_customer, params_customer)  
+    rows_customer = cursor.fetchone()
+    id_customer = rows_customer[0]
+    
+    # รูปภาพ ผชท 
+    query_img_customer = """
+        SELECT FILE_ID ,TYPE ,FILE_TYPE FROM CUSTOMER_SERVICE.MF_CUST_INFO_IMAGES WHERE DELETE_FLAG ='0' 
+    """
+    params_img_customer = {}
+    if id_customer:
+        query_img_customer += " AND ID = :id_customer"
+        params_img_customer["id_customer"] = str(id_customer).strip()
+
+    cursor.execute(query_img_customer, params_img_customer) 
+    rows_img_customer = cursor.fetchall()
+    columns_img_customer = [col[0].lower() for col in cursor.description]
+
+    result_img_customer = [dict(zip(columns_img_customer, row)) for row in rows_img_customer]
+    result_img_car = [dict(zip(columns_img_car, row)) for row in rows_img_car]
+
+    return result_img_customer + result_img_car

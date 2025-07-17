@@ -8,6 +8,7 @@ import InvoiceRoutes from "./routes/InvoiceRoutes";
 import ReceiptRoutes from "./routes/ReceiptRoutes";
 import TranDetailRoutes from "./routes/TranDetailRoutes";
 import ReconcileRoutes from "./routes/ReconcileRoutes";
+import ImgRegisRoutes from "./routes/ImgRegisRoutes";
 
 
 function App() {
@@ -46,6 +47,10 @@ function App() {
           {/* ค้นหา Transection Detail */}
           {/* 🔹 tran detail search routes */}
           {TranDetailRoutes }
+
+          {/* ค้นหารูปภาพการลงทะเบียน */}
+          {/* 🔹 Image registration search routes */}
+          {ImgRegisRoutes }
 
         </Route>
       </Routes>

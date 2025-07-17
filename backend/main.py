@@ -13,6 +13,8 @@ from db import get_tran_member
 from db import get_tran_nonmember
 from db import get_tran_illegal
 from db import fetch_tran_details
+from db import search_car
+from db import search_images_register
 from typing import Optional, List, Dict
 from routers import reconcile
 
@@ -71,6 +73,40 @@ def download_ebill_zip(file_ids: List[str] = Body(...)):
     return StreamingResponse(memory_file, media_type="application/zip", headers={
         "Content-Disposition": "attachment; filename=ebill_files.zip"
     })
+
+class FileDownloadRequest(BaseModel):
+    file_ids: List[str]
+    file_types: List[str]
+
+@app.post("/download-multiple-zip")
+def download_multiple_zip(data: FileDownloadRequest):
+    file_ids = data.file_ids
+    file_types = data.file_types
+    memory_file = io.BytesIO()
+
+    with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as zf:
+        for i, file_id in enumerate(file_ids):
+            try:
+                url = f"{FILE_SERVICE_URL}/{file_id}?key={API_KEY}"
+                response = requests.get(url)
+
+                if response.status_code == 200:
+                    ext = file_types[i] if i < len(file_types) else "bin"
+                    filename = f"{file_id}.{ext}"
+                    zf.writestr(filename, response.content)
+                else:
+                    zf.writestr(f"{file_id}_ERROR.txt", f"Failed to download. Status: {response.status_code}")
+            except Exception as e:
+                zf.writestr(f"{file_id}_ERROR.txt", f"Exception occurred: {str(e)}")
+
+    memory_file.seek(0)
+    return StreamingResponse(
+        memory_file,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=ebill_files.zip"
+        }
+    )
 
 @app.get("/check")
 def check_ref(ref_id: Optional[str] = None, last4: Optional[str] = None, date: Optional[str] = None):
@@ -144,6 +180,31 @@ def invoice_search(
         print("❌ Invoice Search API Error:", e)
         return {"error": str(e)}
 
+@app.get("/search-img-regis")
+def img_regis_search(
+    plate1: Optional[str] = None,
+    plate2: Optional[str] = None,
+    province: Optional[str] = None,
+):
+    try:
+
+        if plate1 and  plate2 and  province :
+
+            result_car = search_car(
+                plate1, plate2, province
+            )
+
+            if result_car:
+                result_img = search_images_register(
+                    result_car[0]['id'],
+                    result_car[0]['customer_id']
+                )
+                
+            return {"data": result_car, "image": result_img}
+
+    except Exception as e:
+        print("❌ Register Search API Error:", e)
+        return {"error": str(e)}
 
 @app.get("/search-receipt")
 def search_receipt(
@@ -256,3 +317,35 @@ def download_excel(filename: str):
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename=filename)
     raise HTTPException(status_code=404, detail="File not found")
+
+@app.get("/search-receipt")
+def search_receipt(
+    member_type: str,
+    plate1: Optional[str] = None,
+    plate2: Optional[str] = None,
+    province: Optional[str] = None,
+    invoice_no: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+):
+    try:
+        member_type_upper = member_type.strip().upper()
+        
+        if member_type_upper == "MEMBER":
+            result = search_member_receipt(
+                plate1, plate2, province,
+                invoice_no, start_date, end_date
+            )
+        elif member_type_upper == "NONMEMBER":
+            result = search_nonmember_receipt(
+                plate1, plate2, province,
+                invoice_no, start_date, end_date
+            )
+        else:
+            return {"error": "member_type ต้องเป็น MEMBER หรือ NONMEMBER"}
+
+        return {"data": result}
+
+    except Exception as e:
+        print("❌ Invoice Search API Error:", e)
+        return {"error": str(e)}

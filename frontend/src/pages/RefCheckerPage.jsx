@@ -29,7 +29,7 @@ export default function RefCheckerPage() {
     <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-xl mx-auto mt-10">
       <h2 className="flex gap-3 text-2xl font-bold mb-6">
           <Banknote className="w-8 h-8"/>
-          ตรวจสอบการชำระเงิน
+          ตรวจสอบสลิปการชำระเงิน
       </h2>
 
       <div className="mt-4">
