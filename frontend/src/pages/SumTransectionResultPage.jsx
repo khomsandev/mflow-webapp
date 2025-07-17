@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ResultTable from "../components/ResultTable";
 import { API_BASE_URL, API_KEY, FILE_SERVICE_URL } from "../config";
-import * as XLSX from "xlsx";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import {
@@ -21,6 +20,7 @@ export default function SumTransectionResultPage() {
   const customerId = searchParams.get("customer_id");
   const startDate = searchParams.get("start_date");
   const endDate = searchParams.get("end_date");
+  const [companyNameForDownload, setCompanyNameForDownload] = useState(''); 
 
   const [result, setResult] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +54,15 @@ export default function SumTransectionResultPage() {
         if (!res.ok) throw new Error("Network response was not ok");
         const data = await res.json();
         setResult(data.data || []);
+
+        // อัปเดต companyNameForDownload เมื่อข้อมูลโหลดเสร็จ
+        if (data.data && data.data.length > 0 && data.data[0].company_name) {
+            // ทำความสะอาดชื่อบริษัทเพื่อใช้ในชื่อไฟล์
+            const sanitizedName = data.data[0].company_name.replace(/[^a-zA-Z0-9\u0E00-\u0E7F]/g, ''); // เพิ่มการรองรับภาษาไทย
+            setCompanyNameForDownload(sanitizedName);
+        } else {
+            setCompanyNameForDownload(''); // ถ้าไม่มี ให้เป็นค่าว่าง
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         alert("โหลดข้อมูลล้มเหลว");
@@ -103,12 +112,15 @@ export default function SumTransectionResultPage() {
       };
     });
 
+    // ใช้ companyNameForDownload ที่ถูกเก็บไว้ใน state
+    const finalCompanyName = companyNameForDownload ? `${companyNameForDownload}` : '';
+
     const buffer = await workbook.xlsx.writeBuffer();
     saveAs(
       new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }),
-      `SumTransection_${customerId}_${startDate}_to_${endDate}.xlsx`
+      `รายการผ่านทาง_${finalCompanyName}_${startDate}_to_${endDate}.xlsx`
     );
   };
 

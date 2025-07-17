@@ -104,13 +104,7 @@ def get_car_balance_by_customer_id(customer_id):
             CASE 
                 WHEN mcvi.DELETE_FLAG = 1 OR mcvi.DRAFT_FLAG = 1 THEN 'INACTIVE'
                 WHEN mcvi.DELETE_FLAG = 0 THEN 'ACTIVE'
-            END AS STATUS,
-            mcvi.CREATE_BY,
-            mcvi.CREATE_BY_ID,
-            TO_CHAR(mcvi.UPDATE_DATE, 'DD/MM/YYYY') AS DATE_UPDATE,
-            TO_CHAR(mcvi.UPDATE_DATE, 'HH24:MI:SS') AS TIME_UPDATE,
-            mcvi.UPDATE_BY,
-            mcvi.UPDATE_BY_ID 
+            END AS STATUS
         FROM CUSTOMER_SERVICE.MF_CUST_VEHICLE_INFO mcvi 
         LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE mcmvo ON mcvi.PROVINCE = mcmvo.CODE
         LEFT JOIN AUTH_SERVICE.MF_AUTHENTICATION ma ON ma.ACCOUNT_ID = mcvi.CUSTOMER_ID
@@ -134,20 +128,20 @@ def get_summary_by_customer_id_and_date(customer_id, start_date, end_date):
 
     query = """
         SELECT 
-            a.FULL_NAME AS company_name, TO_CHAR(b.TRANSACTION_DATE,'DD/MM/YYYY') AS tran_date, TO_CHAR(b.TRANSACTION_DATE,'HH24:MI:SS') AS tran_time,
+            a.FULL_NAME AS COMPANY_NAME, TO_CHAR(b.TRANSACTION_DATE,'DD/MM/YYYY') AS TRAN_DATE, TO_CHAR(b.TRANSACTION_DATE,'HH24:MI:SS') AS TRAN_TIME,
             mcmp2.NAME AS PLAZA, mcml.NAME AS LANE, b.PLATE1 , b.PLATE2, mcmvo2.DESCRIPTION AS PROVINCE, 
             CASE 
                 WHEN a.INVOICE_TYPE = 0 THEN 'ค่าผ่านทาง' 
                 WHEN a.INVOICE_TYPE = 1 THEN 'ค่าผ่านทาง+ค่าปรับ'
             END AS TYPE_INV,
-            b.TOTAL_AMOUNT, a.TOTAL_AMOUNT AS bill_AMOUNT, a.INVOICE_NO, 
+            b.TOTAL_AMOUNT, a.TOTAL_AMOUNT AS BILL_AMOUNT, a.INVOICE_NO, 
             CASE 
                 WHEN a.INVOICE_CHANNEL = 'BILL_TIME' THEN 'รายครั้ง'
                 WHEN a.INVOICE_CHANNEL = 'BILL_CYCLE' THEN 'รายรอบบิล'
             END AS INVOICE_CHANNEL, 
             a.STATUS, TO_CHAR(a.CREATE_DATE,'DD/MM/YYYY') AS INV_DATE, TO_CHAR(a.CREATE_DATE,'HH24:MI:SS') AS INV_TIME,
-            TO_CHAR(a.PAYMENT_DATE,'DD/MM/YYYY') AS PAYMENT_DATE, TO_CHAR(a.PAYMENT_DATE,'HH24:MI:SS') AS PAYMENT_TIME,
-            a.RECEIPT_NO, a.RECEIPT_FILE_ID, a.REF_GROUP
+            a.RECEIPT_NO, TO_CHAR(a.PAYMENT_DATE,'DD/MM/YYYY') AS PAYMENT_DATE, TO_CHAR(a.PAYMENT_DATE,'HH24:MI:SS') AS PAYMENT_TIME,
+            a.RECEIPT_FILE_ID, a.REF_GROUP
         FROM INVOICE_SERVICE.MF_INVOICE a 
         LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL b ON a.INVOICE_NO = b.INVOICE_NO 
         LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA mcmp2 ON mcmp2.CODE  = b.PLAZA_CODE

@@ -3,7 +3,6 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import ResultTable from "../components/ResultTable";
 import { API_BASE_URL } from '../config';
 import ExcelJS from "exceljs";
-import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { HardDriveDownload, 
         ArrowBigLeft,
@@ -17,6 +16,7 @@ export default function CarBalanceResultPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const customer_id = searchParams.get("customer_id");
+  const [companyNameForDownload, setCompanyNameForDownload] = useState(''); 
 
   const [result, setResult] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,15 @@ export default function CarBalanceResultPage() {
         const res = await fetch(`${API_BASE_URL}/car-balance?customer_id=${customer_id}`);
         const data = await res.json();
         setResult(data.data || []);
+
+        // อัปเดต companyNameForDownload เมื่อข้อมูลโหลดเสร็จ
+        if (data.data && data.data.length > 0 && data.data[0].company_name) {
+            // ทำความสะอาดชื่อบริษัทเพื่อใช้ในชื่อไฟล์
+            const sanitizedName = data.data[0].company_name.replace(/[^a-zA-Z0-9\u0E00-\u0E7F]/g, ''); // เพิ่มการรองรับภาษาไทย
+            setCompanyNameForDownload(sanitizedName);
+        } else {
+            setCompanyNameForDownload(''); // ถ้าไม่มี ให้เป็นค่าว่าง
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         alert("โหลดข้อมูลล้มเหลว");
@@ -84,9 +93,12 @@ export default function CarBalanceResultPage() {
     const dd = String(today.getDate()).padStart(2, "0");
     const dateStr = `${yyyy}${mm}${dd}`; // เช่น 20250703
 
-    // Save the file with customer_id and date in the filename
-    // ตัวอย่าง: car_balance_C20220324213075353_20250703.xlsx
-    saveAs(blob, `car_balance_${customer_id}_${dateStr}.xlsx`);
+    // ใช้ companyNameForDownload ที่ถูกเก็บไว้ใน state
+    const finalCompanyName = companyNameForDownload ? `${companyNameForDownload}` : '';
+
+    // Save the file with customer_id, company_name and date in the filename
+    // ตัวอย่าง: car_balance_C20220324213075353_CompanyName_20250703.xlsx
+    saveAs(blob, `car_balance_${finalCompanyName}_${dateStr}.xlsx`);
   };
 
   return (
