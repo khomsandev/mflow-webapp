@@ -9,6 +9,7 @@ import ReceiptRoutes from "./routes/ReceiptRoutes";
 import TranDetailRoutes from "./routes/TranDetailRoutes";
 import ReconcileRoutes from "./routes/ReconcileRoutes";
 import ImgRegisRoutes from "./routes/ImgRegisRoutes";
+import ErrorCodeRoutes from "./routes/ErrorCodeRoutes";
 
 
 function App() {
@@ -51,6 +52,10 @@ function App() {
           {/* ค้นหารูปภาพการลงทะเบียน */}
           {/* 🔹 Image registration search routes */}
           {ImgRegisRoutes }
+
+          {/* ค้นหา Error Code */}
+          {/* 🔹 Error code search routes */}
+          {ErrorCodeRoutes }
 
         </Route>
       </Routes>

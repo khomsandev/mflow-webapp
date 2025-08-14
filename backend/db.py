@@ -1,13 +1,16 @@
 from typing import List
-import oracledb
-from dotenv import load_dotenv
 import os
+import oracledb
+import psycopg2
+from dotenv import load_dotenv
+
 
 from reconcile_queries import CHANNEL_SQL_MAP
 
 # โหลด .env ที่อยู่ระดับโฟลเดอร์โปรเจกต์ (สมมติว่า .env อยู่ข้างนอกโฟลเดอร์ backend)
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
 
+# ฟังก์ชันเชื่อมต่อ Oracle
 def get_connection():
     # พิมพ์ค่า env เพื่อเช็คว่าถูกโหลดจริงไหม
     # print("USER:", os.getenv("ORA_USER"))
@@ -18,6 +21,16 @@ def get_connection():
         user=os.getenv("ORA_USER"),
         password=os.getenv("ORA_PASSWORD"),
         dsn=os.getenv("ORA_DSN")
+    )
+
+# ฟังก์ชันเชื่อมต่อ PostgreSQL
+def get_pg_connection():
+    return psycopg2.connect(
+        host=os.getenv("PG_HOST"),
+        database=os.getenv("PG_DATABASE"),
+        user=os.getenv("PG_USER"),
+        password=os.getenv("PG_PASSWORD"),
+        port=os.getenv("PG_PORT", 5432)
     )
 
 # ✅ ฟังก์ชันตรวจสอบการชำระเงิน
@@ -722,3 +735,4 @@ def search_images_register(car_id, customer_id):
     result_img_car = [dict(zip(columns_img_car, row)) for row in rows_img_car]
 
     return result_img_customer + result_img_car
+

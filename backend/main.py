@@ -3,6 +3,8 @@ from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
+from typing import Optional, List, Dict
+from routers import reconcile
 from db import get_db_data_by_ref_and_date
 from db import get_car_balance_by_customer_id
 from db import get_summary_by_customer_id_and_date
@@ -15,8 +17,8 @@ from db import get_tran_illegal
 from db import fetch_tran_details
 from db import search_car
 from db import search_images_register
-from typing import Optional, List, Dict
-from routers import reconcile
+from db import get_pg_connection
+
 
 
 from dotenv import load_dotenv
@@ -53,6 +55,51 @@ def cleanup_temp_folder():
 
 app.include_router(reconcile.router)
 
+@app.get("/error-code")
+def get_error_code(file: str = Query(...), code: str = Query(...)):
+    table_map = {
+        "errorAddCarAddTagEPMP": "errorAddCarAddTagEPMP",
+        "errorPaymentViaCardFailed": "errorPaymentViaCardFailed"
+    }
+
+    if file not in table_map:
+        return {"error": "Invalid file name"}
+
+    conn = get_pg_connection()
+    cur = conn.cursor()
+    cur.execute(f"""
+        SELECT error_code, error_description_TH, error_description_EN
+        FROM {table_map[file]}
+        WHERE LOWER(error_code) = LOWER(%s)
+        LIMIT 1
+    """, (code,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if row:
+        return {
+            "error_code": row[0],
+            "error_description_TH": row[1],
+            "error_description_EN": row[2]
+        }
+    else:
+        return None
+
+@app.get("/provinces")
+def get_provinces():
+    conn = get_pg_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT code, name, name_en, dlt_code FROM provinces ORDER BY code ASC")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    provinces_list = [
+        {"code": row[0], "name": row[1], "name_en": row[2], "dlt_code": row[3]}
+        for row in rows
+    ]
+    return provinces_list
 
 @app.post("/download-zip")
 def download_ebill_zip(file_ids: List[str] = Body(...)):
@@ -180,6 +227,7 @@ def invoice_search(
         print("❌ Invoice Search API Error:", e)
         return {"error": str(e)}
 
+
 @app.get("/search-img-regis")
 def img_regis_search(
     plate1: Optional[str] = None,
@@ -205,6 +253,7 @@ def img_regis_search(
     except Exception as e:
         print("❌ Register Search API Error:", e)
         return {"error": str(e)}
+
 
 @app.get("/search-receipt")
 def search_receipt(
@@ -239,6 +288,7 @@ def search_receipt(
         print("❌ Invoice Search API Error:", e)
         return {"error": str(e)}
     
+
 @app.get("/search-tran")
 def search_tran(
     member_type: str,
@@ -267,7 +317,6 @@ def search_tran(
     except Exception as e:
         print("❌ Tran Search API Error:", e)
         return {"error": str(e)}
-
 
 class TranDetailRequest(BaseModel):
     ids: List[str]

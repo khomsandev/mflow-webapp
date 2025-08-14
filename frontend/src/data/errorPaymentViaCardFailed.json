@@ -1,0 +1,517 @@
+[
+    {
+        "error_code": 0,
+        "error_description_EN": "Approved or completed successfully",
+        "error_description_TH": "ธุรกรรมสำเร็จ"
+    },
+    {
+        "error_code": 1,
+        "error_description_EN": "Refer to card issuer",
+        "error_description_TH": "รายการถูกปฏิเสธ และลูกค้าต้องติดต่อธนาคารผู้ออกบัตร"
+    },
+    {
+        "error_code": 2,
+        "error_description_EN": "Refer to card issuer's special conditions",
+        "error_description_TH": "เงื่อนไขบัตรไม่รองรับการจ่ายเงินดังกล่าว"
+    },
+    {
+        "error_code": 3,
+        "error_description_EN": "Invalid merchant",
+        "error_description_TH": "ผู้ให้บริการไม่รองรับบัตรดังกล่าว"
+    },
+    {
+        "error_code": 4,
+        "error_description_EN": "Pick-up",
+        "error_description_TH": "บัตรถูกอายัดบัตรถูกแจ้งหาย"
+    },
+    {
+        "error_code": 5,
+        "error_description_EN": "Do not honor",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 6,
+        "error_description_EN": "Error",
+        "error_description_TH": "มีข้อผิดพลาดทางเทคนิค เกิดขึ้นระหว่างการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 7,
+        "error_description_EN": "Pick-up card, special condition",
+        "error_description_TH": "รายการถูกปฏิเสธและธนาคารผู้ออกบัตร"
+    },
+    {
+        "error_code": 8,
+        "error_description_EN": "Honour with identification",
+        "error_description_TH": "อนุมัติการทำรายการ แต่ต้องมีการตรวจสอบตัวตน"
+    },
+    {
+        "error_code": 9,
+        "error_description_EN": "Request in progress",
+        "error_description_TH": "รายการชำระเงินอยู่ระหว่างดำเนินการ"
+    },
+    {
+        "error_code": 10,
+        "error_description_EN": "Approved for partial amount",
+        "error_description_TH": "การทำรายการได้รับการอนุมัติเพียงบางส่วนของยอดเงินทั้งหมด"
+    },
+    {
+        "error_code": 11,
+        "error_description_EN": "Approved (VIP)",
+        "error_description_TH": "การทำรายการได้รับการอนุมัติ\" โดยมีข้อความระบุเพิ่มเติมว่า \"VIP\" ซึ่งเป็นกรณีพิเศษ"
+    },
+    {
+        "error_code": 12,
+        "error_description_EN": "Invalid transaction",
+        "error_description_TH": "การทำรายการไม่ถูกต้อง"
+    },
+    {
+        "error_code": 13,
+        "error_description_EN": "Invalid amount",
+        "error_description_TH": "ยอดเงินที่ทำรายการไม่ถูกต้อง"
+    },
+    {
+        "error_code": 14,
+        "error_description_EN": "Invalid card number (no such number)",
+        "error_description_TH": "ไม่พบหมายเลขบัตรนี้ในระบบ"
+    },
+    {
+        "error_code": 15,
+        "error_description_EN": "No such issuer",
+        "error_description_TH": "ไม่พบธนาคารผู้ออกบัตร"
+    },
+    {
+        "error_code": 16,
+        "error_description_EN": "Approved, update track 3",
+        "error_description_TH": "การทำรายการได้รับการอนุมัติและอัปเดตข้อมูล "
+    },
+    {
+        "error_code": 17,
+        "error_description_EN": "Customer cancellation",
+        "error_description_TH": "การทำรายการถูกยกเลิกโดยลูกค้า"
+    },
+    {
+        "error_code": 18,
+        "error_description_EN": "Customer dispute",
+        "error_description_TH": "การทำรายการถูกปฏิเสธเนื่องจากอยู่ในระหว่างการโต้แย้ง"
+    },
+    {
+        "error_code": 19,
+        "error_description_EN": "Re-enter transaction",
+        "error_description_TH": "การทำรายการไม่สำเร็จ และควรทำรายการใหม่อีกครั้ง"
+    },
+    {
+        "error_code": 20,
+        "error_description_EN": "Invalid response",
+        "error_description_TH": "ได้รับข้อมูลตอบกลับที่ไม่ถูกต้องหรือไม่สามารถประมวลผลได้"
+    },
+    {
+        "error_code": 21,
+        "error_description_EN": "No action taken",
+        "error_description_TH": "รายการไม่ได้ถูกประมวลผลต่อ อาจเนื่องมาจากปัญหาทางเทคนิค "
+    },
+    {
+        "error_code": 22,
+        "error_description_EN": "Suspected malfunction",
+        "error_description_TH": "สงสัยว่าอุปกรณ์หรือระบบมีปัญหา"
+    },
+    {
+        "error_code": 23,
+        "error_description_EN": "Unacceptable transaction fee",
+        "error_description_TH": "ค่าธรรมเนียมการทำรายการที่ไม่ตรงกับที่ระบบเรียกเก็บ"
+    },
+    {
+        "error_code": 24,
+        "error_description_EN": "File update not supported by receiver",
+        "error_description_TH": "คำขอแก้ไขหรืออัปเดตข้อมูลบางอย่างที่เกี่ยวข้องกับการทำรายการ"
+    },
+    {
+        "error_code": 25,
+        "error_description_EN": "Unable to locate record on file",
+        "error_description_TH": "ไม่สามารถค้นหารายการที่ต้องการได้ในฐานข้อมูล"
+    },
+    {
+        "error_code": 26,
+        "error_description_EN": "Duplicate file update record, old record replaced",
+        "error_description_TH": "คือการส่งคำสั่งเพื่อเปลี่ยนแปลงข้อมูลบางอย่างที่เกี่ยวข้องกับการทำรายการหรือตัวบัตรเอง"
+    },
+    {
+        "error_code": 27,
+        "error_description_EN": "File update field edit error",
+        "error_description_TH": "มีการส่งคำขอเพื่อแก้ไขหรืออัปเดตข้อมูลบางอย่าง"
+    },
+    {
+        "error_code": 28,
+        "error_description_EN": "File update file locked out",
+        "error_description_TH": "รายการหรือข้อมูลบางอย่างถูกล็อกชั่วคราวเพื่อป้องกันไม่ให้มีการแก้ไขข้อมูลซ้ำซ้อน"
+    },
+    {
+        "error_code": 29,
+        "error_description_EN": "File update not successful, contact acquirer",
+        "error_description_TH": "การอัปเดตไฟล์ไม่สำเร็จ กรุณาติดต่อธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 30,
+        "error_description_EN": "Format error",
+        "error_description_TH": "เกิดข้อผิดพลาดในรูปแบบข้อมูล"
+    },
+    {
+        "error_code": 31,
+        "error_description_EN": "Bank not supported by switch",
+        "error_description_TH": "ธนาคารเจ้าของบัตรของลูกค้าอาจไม่รองรับการทำธุรกรรม"
+    },
+    {
+        "error_code": 32,
+        "error_description_EN": "Completed partially",
+        "error_description_TH": "คำขอทำรายการได้รับการประมวลผลบางส่วน แต่ไม่ทั้งหมด"
+    },
+    {
+        "error_code": 33,
+        "error_description_EN": "Expired card",
+        "error_description_TH": "บัตรหมดอายุ"
+    },
+    {
+        "error_code": 34,
+        "error_description_EN": "Suspected fraud",
+        "error_description_TH": "บัตรถูกอายัดบัตรถูกแจ้งหาย ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 35,
+        "error_description_EN": "Card acceptor contact acquirer",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 36,
+        "error_description_EN": "Restricted card",
+        "error_description_TH": "บัตรถูกจำกัดการใช้งาน"
+    },
+    {
+        "error_code": 37,
+        "error_description_EN": "Card acceptor call acquirer security",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 38,
+        "error_description_EN": "Allowable PIN tries exceeded",
+        "error_description_TH": "มีการป้อนรหัส PIN ผิดเกินจำนวนครั้งที่กำหนด"
+    },
+    {
+        "error_code": 39,
+        "error_description_EN": "No credit account",
+        "error_description_TH": "ไม่พบข้อมูลบัตรเครดิต"
+    },
+    {
+        "error_code": 40,
+        "error_description_EN": "Requested function not supported",
+        "error_description_TH": "ฟังก์ชันที่ร้องขอไม่รองรับการทำรายการจ่าย"
+    },
+    {
+        "error_code": 41,
+        "error_description_EN": "Lost card",
+        "error_description_TH": "ถูกเจ้าของแจ้งหายไปแล้ว"
+    },
+    {
+        "error_code": 42,
+        "error_description_EN": "No universal account",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน เนื่องจากไม่พบเลขบัตร"
+    },
+    {
+        "error_code": 43,
+        "error_description_EN": "Stolen card, pick-up",
+        "error_description_TH": "บัตรถูกขโมย"
+    },
+    {
+        "error_code": 44,
+        "error_description_EN": "No investment account",
+        "error_description_TH": "บัตรผิดประเภทไม่สามารถทำรายการได้"
+    },
+    {
+        "error_code": 45,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 46,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 47,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 48,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 49,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 50,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธการทำรายการชำระเงิน"
+    },
+    {
+        "error_code": 51,
+        "error_description_EN": "Not sufficient funds",
+        "error_description_TH": "เงินในบัญชีไม่เพียงพอ"
+    },
+    {
+        "error_code": 52,
+        "error_description_EN": "No checking account",
+        "error_description_TH": "ทำรายการกับบัญชีกระแสรายวัน ทั้งที่บัตรของลูกค้าผูกกับบัญชีออมทรัพย์"
+    },
+    {
+        "error_code": 53,
+        "error_description_EN": "No savings account",
+        "error_description_TH": "บัญชีออมทรัพย์ของลูกค้าอาจถูกปิดไปแล้ว"
+    },
+    {
+        "error_code": 54,
+        "error_description_EN": "Expired card",
+        "error_description_TH": "บัตรหมดอายุ"
+    },
+    {
+        "error_code": 55,
+        "error_description_EN": "Incorrect personal identification number",
+        "error_description_TH": "รหัส PIN ไม่ถูกต้อง"
+    },
+    {
+        "error_code": 56,
+        "error_description_EN": "No card record",
+        "error_description_TH": "ไม่พบข้อมูลบัตร"
+    },
+    {
+        "error_code": 57,
+        "error_description_EN": "Transaction not permitted to cardholder",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการนี้"
+    },
+    {
+        "error_code": 58,
+        "error_description_EN": "Transaction not permitted to terminal",
+        "error_description_TH": "ไม่ได้รับอนุญาตให้ทำรายการจากเครื่องรูดบัตร"
+    },
+    {
+        "error_code": 59,
+        "error_description_EN": "Suspected fraud",
+        "error_description_TH": "ธนาคารผู้ออกบัตร (Card Issuer) ตรวจพบพฤติกรรมการใช้จ่ายที่ผิดปกติ ธนาคารผู้ออกบัตรปฏิเสธกรายการนี้"
+    },
+    {
+        "error_code": 60,
+        "error_description_EN": "Card acceptor contact acquirer",
+        "error_description_TH": "ระบบการชำระเงินส่งกลับมาเพื่อปฏิเสธการทำรายการ ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 61,
+        "error_description_EN": "Exceeds withdrawal amount limit",
+        "error_description_TH": "เกินวงเงินการใช้จ่าย"
+    },
+    {
+        "error_code": 62,
+        "error_description_EN": "Restricted card",
+        "error_description_TH": "บัตรถูกจำกัดการใช้งาน"
+    },
+    {
+        "error_code": 63,
+        "error_description_EN": "Security violation",
+        "error_description_TH": "บัตร มีการละเมิดมาตรการความปลอดภัย ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 64,
+        "error_description_EN": "Original amount incorrect",
+        "error_description_TH": "ยอดเงินต้นไม่ถูกต้อง"
+    },
+    {
+        "error_code": 65,
+        "error_description_EN": "Exceeds withdrawal frequency limit",
+        "error_description_TH": "เกินจำนวนครั้งที่ถอนเงินได้"
+    },
+    {
+        "error_code": 66,
+        "error_description_EN": "Card acceptor call acquirer's security department",
+        "error_description_TH": "รายการไม่สำเร็จเนื่องจากมีการละเมิดมาตรการความปลอดภัย และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 67,
+        "error_description_EN": "Hard capture (requires that card be picked up at ATM)",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการนี้  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 68,
+        "error_description_EN": "Response received too late",
+        "error_description_TH": "ได้รับข้อมูลตอบกลับช้าเกินไป ทำให้รายการชำระเงิน ไม่สำเร็จ"
+    },
+    {
+        "error_code": 69,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 70,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 71,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 72,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 73,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 74,
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 75,
+        "error_description_EN": "Allowable number of PIN tries exceeded",
+        "error_description_TH": "มีการป้อนรหัส PIN ผิดเกินจำนวนครั้งที่กำหนด"
+    },
+    {
+        "error_code": 76,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 77,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 78,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 79,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 80,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 81,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 82,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 83,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 84,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 85,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 86,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 87,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 88,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 89,
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 90,
+        "error_description_EN": "Cutoff is in process (switch ending a day's business and starting the next. Transaction can be sent again in a few minutes)",
+        "error_description_TH": "กำลังอยู่ในระหว่างการตัดยอดประจำวัน"
+    },
+    {
+        "error_code": 91,
+        "error_description_EN": "Issuer or switch is inoperative",
+        "error_description_TH": "ธนาคารผู้ออกบัตรหรือเครือข่ายไม่สามารถใช้งานได้ ณ ช่วงเวลาการตัดเงิน"
+    },
+    {
+        "error_code": 92,
+        "error_description_EN": "Financial institution or intermediate network facility cannot be found for routing",
+        "error_description_TH": "ไม่พบสถาบันการเงินหรือเครือข่ายกลางสำหรับส่งข้อมูล"
+    },
+    {
+        "error_code": 93,
+        "error_description_EN": "Transaction cannot be completed. Violation of law",
+        "error_description_TH": "ไม่สามารถทำรายการได้ ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน"
+    },
+    {
+        "error_code": 94,
+        "error_description_EN": "Duplicate transmission",
+        "error_description_TH": "ข้อมูลถูกส่งชำระเงินซ้ำ และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 95,
+        "error_description_EN": "Reconcile error",
+        "error_description_TH": "เกิดข้อผิดพลาดในการตัดเงิน ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 96,
+        "error_description_EN": "System malfunction",
+        "error_description_TH": "เกิดข้อผิดพลาดทางเซิร์ฟเวอร์ของธนาคารผู้ออกบัตร แนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 97,
+        "error_description_EN": "Reserved for national use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 98,
+        "error_description_EN": "Reserved for national use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": 99,
+        "error_description_EN": "Reserved for national use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": "Zero A-9Z",
+        "error_description_EN": "Reserved for ISO use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": "A Zero-MZ",
+        "error_description_EN": "Reserved for national use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    },
+    {
+        "error_code": "N Zero-ZZ",
+        "error_description_EN": "Reserved for private use",
+        "error_description_TH": "ธนาคารผู้ออกบัตรปฏิเสธกรายการชำระเงิน  และแนะนำให้ติดต่อกับธนาคารเจ้าของบัตร"
+    }
+]

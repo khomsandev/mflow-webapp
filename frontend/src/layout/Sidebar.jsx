@@ -9,6 +9,7 @@ import {
   UserCheck,UserX,
   TriangleAlert,Menu,
   Camera,HandCoins,
+  SearchCode,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -286,6 +287,19 @@ export default function Sidebar() {
         >
           <Camera className="w-4 h-4" />
           {!collapsed && "ค้นหารูปภาพการลงทะเบียน"}
+        </NavLink>
+
+        {/* ค้นหา ErrorCode */}
+        <NavLink
+          to="/search-errorcode"
+          className={({ isActive }) =>
+            `flex items-center gap-2 px-3 py-2 rounded ${
+              isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-blue-100"
+            }`
+          }
+        >
+          <SearchCode className="w-4 h-4" />
+          {!collapsed && "ค้นหา ErrorCode"}
         </NavLink>
         
 

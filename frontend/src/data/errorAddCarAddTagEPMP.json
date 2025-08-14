@@ -1,0 +1,587 @@
+[
+    {
+        "error_code": "ERR_AUTH_0015",
+        "error_description_TH": "ไม่พบ JWT ในระบบ",
+        "error_description_EN": "Not found JWT in the system."
+    },
+    {
+        "error_code": "ERR_CS_00002",
+        "error_description_TH": "ข้อมูล Transaction Id บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Transaction Id on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00003",
+        "error_description_TH": "Request Date บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The request date on the header is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00004",
+        "error_description_TH": "Source บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The data on  the source is not correct."
+    },
+    {
+        "error_code": "ERR_CS_00005",
+        "error_description_TH": "Language บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The language on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00124",
+        "error_description_TH": "กรุณาระบุข้อมูล Access Key บน Header",
+        "error_description_EN": "Please enter the Access Key on the Header."
+    },
+    {
+        "error_code": "ERR_CS_00150",
+        "error_description_TH": "System บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The System on the Header Request is invalid."
+    },
+    {
+        "error_code": "INFO_CS_00000",
+        "error_description_TH": "ระบบดำเนินการสำเร็จเรียบร้อยแล้ว",
+        "error_description_EN": "The systems have already proceeded success."
+    },
+    {
+        "error_code": "INFO_CS_00003",
+        "error_description_TH": "รอเจ้าหน้าที่ติดต่อกลับเพื่อขอเอกสารเพิ่มเติม",
+        "error_description_EN": "Wait for the staff to contact you back to request additional documents."
+    },
+    {
+        "error_code": "ERR_CS_00011",
+        "error_description_TH": "กรุณาระบุข้อมูลช่องทางในการสมัครการใช้งาน",
+        "error_description_EN": "Please enter the data of the registration channel."
+    },
+    {
+        "error_code": "ERR_CS_00012",
+        "error_description_TH": "ข้อมูลช่องทางในการสมัครการใช้งานไม่ถูกต้อง",
+        "error_description_EN": "The registration channel is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00013",
+        "error_description_TH": "กรุณาระบุข้อมูลชื่ออจริงของผู้ใช้งาน",
+        "error_description_EN": "Please enter the first name."
+    },
+    {
+        "error_code": "ERR_CS_00014",
+        "error_description_TH": "กรุณาระบุข้อมูลนามสกุลของผู้ใช้งาน",
+        "error_description_EN": "Please enter the last name."
+    },
+    {
+        "error_code": "ERR_CS_00015",
+        "error_description_TH": "กรุณาระบุข้อมูลชื่อนิติบุคคลที่สมัคร",
+        "error_description_EN": "Please enter the name of the juristic person."
+    },
+    {
+        "error_code": "ERR_CS_00016",
+        "error_description_TH": "กรุณาระบุข้อมูลวันเกิดของผู้ใช้งาน",
+        "error_description_EN": "Please enter the user birthday."
+    },
+    {
+        "error_code": "ERR_CS_00017",
+        "error_description_TH": "ข้อมูลวันเกิดของผู้ใช้งานไม่ถูกต้อง",
+        "error_description_EN": "User birthday is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00019",
+        "error_description_TH": "กรุณาระบุข้อมูลเพศของผู้ใช้งาน",
+        "error_description_EN": "Please enter the gender."
+    },
+    {
+        "error_code": "ERR_CS_00021",
+        "error_description_TH": "ข้อมูลเพศของผู้ใช้งานไม่ถูกต้อง",
+        "error_description_EN": "User gender is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00022",
+        "error_description_TH": "ข้อมูลเลขบัตรประจำตัวประชาชนของผู้ใช้งานไม่ถูกต้อง",
+        "error_description_EN": "The user identity card number is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00024",
+        "error_description_TH": "กรุณาระบุข้อมูลเลขที่หนังสือเดินทางระหว่างประเทศของผู้ใช้งาน",
+        "error_description_EN": "Please enter the passport number."
+    },
+    {
+        "error_code": "ERR_CS_00025",
+        "error_description_TH": "กรุณาระบุข้อมูลเลขที่จำทะเบียน 13 หลัก DBD ของผุ้ใช้งาน",
+        "error_description_EN": "Please enter the number 13 digit DBD registration."
+    },
+    {
+        "error_code": "ERR_CS_00026",
+        "error_description_TH": "กรุณาระบุข้อมูลประเภทของลูกค้า",
+        "error_description_EN": "Please enter the customer type."
+    },
+    {
+        "error_code": "ERR_CS_00034",
+        "error_description_TH": "ข้อมูลประเภทของลูกค้าไม่ถูกต้อง",
+        "error_description_EN": "The customer type is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00071",
+        "error_description_TH": "กรุณาระบุข้อมูลคำนำหน้าชื่อ",
+        "error_description_EN": "Please enter name title."
+    },
+    {
+        "error_code": "ERR_CS_00072",
+        "error_description_TH": "กรุณาระบุข้อมูลคำนำหน้าชื่อให้ถูกต้อง",
+        "error_description_EN": "Please enter a valid  name title."
+    },
+    {
+        "error_code": "ERR_CS_00095",
+        "error_description_TH": "กรุณาระบุข้อมูลบ้านเลขที่",
+        "error_description_EN": "Please enter a valid House No."
+    },
+    {
+        "error_code": "ERR_CS_00097",
+        "error_description_TH": "กรุณาระบุข้อมูลตำบล / แขวง",
+        "error_description_EN": "Please enter a valid Sub-district/ Sub-area."
+    },
+    {
+        "error_code": "ERR_CS_00098",
+        "error_description_TH": "กรุณาระบุข้อมูลอำเภอ / เขต",
+        "error_description_EN": "Please enter a valid Amphoe/Area."
+    },
+    {
+        "error_code": "ERR_CS_00099",
+        "error_description_TH": "กรุณาระบุข้อมูลจังหวัด",
+        "error_description_EN": "Please enter a valid Province."
+    },
+    {
+        "error_code": "ERR_CS_00100",
+        "error_description_TH": "กรุณาระบุข้อมูลรหัสไปรษณีย์",
+        "error_description_EN": "Please enter a valid Postal Code."
+    },
+    {
+        "error_code": "ERR_CS_00112",
+        "error_description_TH": "กรุณาระบุข้อมูลอีเมล",
+        "error_description_EN": "Please enter email."
+    },
+    {
+        "error_code": "ERR_CS_00113",
+        "error_description_TH": "ข้อมูลอีเมลไม่ถูกต้อง",
+        "error_description_EN": "Invalid email."
+    },
+    {
+        "error_code": "ERR_CS_00114",
+        "error_description_TH": "กรุณาระบุข้อมูล Account Id",
+        "error_description_EN": "กรุณาระบุข้อมูล Account Id"
+    },
+    {
+        "error_code": "ERR_CS_00121",
+        "error_description_TH": "กรุณาระบุข้อมูลสัญชาติ",
+        "error_description_EN": "Please enter the nationality."
+    },
+    {
+        "error_code": "ERR_CS_00122",
+        "error_description_TH": "กรุณาระบุข้อมูลสัญชาติอื่นๆ",
+        "error_description_EN": "Please enter other nationalities."
+    },
+    {
+        "error_code": "ERR_CS_00168",
+        "error_description_TH": "กรุณาระบุประเภทผู้ลงทะเบียนของบริษัท",
+        "error_description_EN": "Please enter an authorized director"
+    },
+    {
+        "error_code": "ERR_CS_00182",
+        "error_description_TH": "กรุณาระบุข้อมูลหมวดหมู่ทะเบียน",
+        "error_description_EN": "The plate 1 is required."
+    },
+    {
+        "error_code": "ERR_CS_00183",
+        "error_description_TH": "กรุณาระบุข้อมูลเลขทะเบียน",
+        "error_description_EN": "The plate 2 is required."
+    },
+    {
+        "error_code": "ERR_CS_00210",
+        "error_description_TH": "กรุณาระบุข้อมูลเบอร์โทรศัพท์",
+        "error_description_EN": "Please provide your phone number."
+    },
+    {
+        "error_code": "ERR_CS_00211",
+        "error_description_TH": "กรุณาระบุข้อมูลสำนักงานใหญ่/สาขา",
+        "error_description_EN": "Please specify head office / branch information."
+    },
+    {
+        "error_code": "ERR_CS_00212",
+        "error_description_TH": "ข้อมูลสำนักงานใหญ่/สาขา ไม่ถูกต้อง",
+        "error_description_EN": "Incorrect head office / branch information"
+    },
+    {
+        "error_code": "ERR_CS_00213",
+        "error_description_TH": "กรุณาระบุข้อมูลชำระเป็นรอบบิล/รายครั้ง",
+        "error_description_EN": "Please provide the form of payment."
+    },
+    {
+        "error_code": "ERR_CS_00214",
+        "error_description_TH": "ข้อมูลชำระเป็นรอบบิล/รายครั้ง ไม่ถูกต้อง",
+        "error_description_EN": "Invalid form of payment information."
+    },
+    {
+        "error_code": "ERR_CS_00215",
+        "error_description_TH": "กรุณาระบุข้อมูลรูปแบบการชำระเงิน",
+        "error_description_EN": "Please provide the form of payment."
+    },
+    {
+        "error_code": "ERR_CS_00216",
+        "error_description_TH": "ข้อมูลรูปแบบการชำระเงิน ไม่ถูกต้อง",
+        "error_description_EN": "Invalid form of payment information."
+    },
+    {
+        "error_code": "ERR_CS_00219",
+        "error_description_TH": "กรุณาระบุข้อมูลหมายเลข M-Pass",
+        "error_description_EN": "Please enter a number of M-Pass"
+    },
+    {
+        "error_code": "ERR_CS_00220",
+        "error_description_TH": "กรุณาระบุข้อมูลหมายเลข Easy-Pass",
+        "error_description_EN": "Please enter a number of Easy-Pass"
+    },
+    {
+        "error_code": "ERR_CS_00224",
+        "error_description_TH": "กรุณาระบุข้อมูลเบอร์โทรศัพท์",
+        "error_description_EN": "Please provide your phone number."
+    },
+    {
+        "error_code": "ERR_CS_00236",
+        "error_description_TH": "กรุณาระบุข้อมูลชื่อสาขา",
+        "error_description_EN": "Please provide the branch name."
+    },
+    {
+        "error_code": "ERR_CS_00237",
+        "error_description_TH": "กรุณาระบุข้อมูลประเภทธุรกิจ",
+        "error_description_EN": "Please provide the business type."
+    },
+    {
+        "error_code": "ERR_CS_00238",
+        "error_description_TH": "ข้อมูลประเภทธุรกิจ ไม่ถูกต้อง",
+        "error_description_EN": "Business Type is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00311",
+        "error_description_TH": "กรุณาระบุหมายเลขบัตร (S/N) 10 หลัก หรือหมายเลขกล่อง (OBU) 19 หลัก",
+        "error_description_EN": "Please enter 10 digits Card number (S/N) or 19 digits Tag number (OBU)."
+    },
+    {
+        "error_code": "ERR_CS_00313",
+        "error_description_TH": "ไม่พบข้อมูลประเภทรถ",
+        "error_description_EN": "Vehicle type not found."
+    },
+    {
+        "error_code": "ERR_CS_00314",
+        "error_description_TH": "ไม่พบข้อมูลยี่ห้อรถ",
+        "error_description_EN": "Vehicle brand not found."
+    },
+    {
+        "error_code": "ERR_CS_00316",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} หมายเลขบัตรประชาชน หรือ passport {0} หมายเลข {5} {1} \nและหมายเลขทะเบียน {2} เป็นสมาชิก M-Flow แล้ว ",
+        "error_description_EN": "Mobile no.{3} citizen id or passport no. {0} {5} no. {1} \nand License Plate no. {2} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00317",
+        "error_description_TH": "เนื่องจากหมายเลข {5} {1} ผูกชำระเงิน M-Flow แล้ว",
+        "error_description_EN": "{5} no. {1} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00318",
+        "error_description_TH": "เนื่องจากหมายเลขทะเบียนรถ {2} และ หมายเลข {5} {1} เป็นสมาชิก M-Flow แล้ว",
+        "error_description_EN": "License Plat no. {2} and {5} no. {1} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00319",
+        "error_description_TH": "เนื่องจากหมายเลขทะเบียนรถ {2} เป็นสมาชิก M-Flow ด้วยสมาชิกท่านอื่นแล้ว ",
+        "error_description_EN": "License Plate no. {2} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00320",
+        "error_description_TH": "เนื่องจากหมายเลข {5} {1} ผูกชำระเงินใน Line OA แล้ว",
+        "error_description_EN": "{5} no. {1} already a LINE OA."
+    },
+    {
+        "error_code": "ERR_CS_00321",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} , อีเมล์ {4}  และ หมายเลขบัตรประชาชน หรือ passport เป็นสมาชิกแล้ว",
+        "error_description_EN": "Mobile No {3} and/or citizen id or passport no. {0} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00322",
+        "error_description_TH": "ไม่พบหมายเลขทะเบียนรถ {2}",
+        "error_description_EN": "License Plate no. {2}  number not found."
+    },
+    {
+        "error_code": "ERR_CS_00323",
+        "error_description_TH": "เนื่องจากหมายเลขทะเบียนรถ {2} ไม่ใช่รถ 4 ล้อ",
+        "error_description_EN": "License Plat no. {2} not a 4 wheel."
+    },
+    {
+        "error_code": "ERR_CS_00324",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} เป็นสมาชิก M-Flow แล้ว แต่หมายเลข ID ไม่ตรงกัน",
+        "error_description_EN": "Mobile no. {3} already a M-Flow member but ID no. not match."
+    },
+    {
+        "error_code": "ERR_CS_00325",
+        "error_description_TH": "เนื่องจากหมายเลขบัตรประชาชน หรือ passport {0} เป็นสมาชิก M-Flow แล้ว แต่หมายเลขโทรศัพท์ {3} ไม่ตรงกัน",
+        "error_description_EN": "Citizen id or passport no. {0} already a M-Flow member but Mobile no. not match."
+    },
+    {
+        "error_code": "ERR_CS_00326",
+        "error_description_TH": "เนื่องจากอีเมล {4} เป็นสมาชิก M-Flow แล้ว แต่หมายเลขโทรศัพท์ {3} หมายเลขบัตรประชาชน หรือ passport {0} ไม่ตรงกัน",
+        "error_description_EN": "Email {4} already a M-Flow member but Mobile no.{3} and citizen id or passport no.{0} not match."
+    },
+    {
+        "error_code": "ERR_CS_00327",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} หมายเลขบัตรประชาชน หรือ passport {0} เป็นสมาชิก M-Flow แล้ว แต่อีเมล {4} ไม่ตรงกับ M-Flow",
+        "error_description_EN": "Mobile no.{3} citizen id or passport no. {0} already a M-Flow member but Email {4} not match."
+    },
+    {
+        "error_code": "ERR_CS_00328",
+        "error_description_TH": "ลูกค้าไม่ยืนยันการเปลี่ยนการชำระเงิน",
+        "error_description_EN": "The customer did not confirm the payment change."
+    },
+    {
+        "error_code": "ERR_CS_00330",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} หมายเลขบัตรประชาชน หรือ passport {0} อีเมล {4} เป็นสมาชิก M-Flow แล้ว",
+        "error_description_EN": "Mobile no.{3} citizen id or passport no. {0} Email {4} already a M-Flow member."
+    },
+    {
+        "error_code": "ERR_CS_00331",
+        "error_description_TH": "เนื่องจากหมายเลขโทรศัพท์ {3} หมายเลขบัตรประชาชน หรือ passport {0} อีเมล {4} เป็นสมาชิก M-Flow แล้ว",
+        "error_description_EN": "Mobile no.{3} citizen id or passport no. {0} under review a membership."
+    },
+    {
+        "error_code": "ERR_CS_00332",
+        "error_description_TH": "กรุณาระบุประเภทที่อยู่อาศัย",
+        "error_description_EN": "Please specify the type of residence."
+    },
+    {
+        "error_code": "ERR_CS_00333",
+        "error_description_TH": "ประเภทที่อยู่อาศัยไม่ถูกต้อง",
+        "error_description_EN": "Invalid housing type."
+    },
+    {
+        "error_code": "ERR_CS_00334",
+        "error_description_TH": "กรุณาระบุการยืนยันการเปลี่ยนช่องทางการชำระ หรือ เพิ่มรถ และ OBU",
+        "error_description_EN": "Please specify confirmation of changing payment channels or add car and OBU."
+    },
+    {
+        "error_code": "ERR_CS_00335",
+        "error_description_TH": "กรุณาระบุการยืนยันการเปลี่ยนช่องทางการชำระ หรือ เพิ่มรถ และ OBU ข้อมูลให้ถูกต้อง",
+        "error_description_EN": "Please specify the confirmation of changing the payment channel or add car and OBU. The information is correct."
+    },
+    {
+        "error_code": "ERR_CS_00336",
+        "error_description_TH": "กรุณาระบุเบอร์โทรศัพท์ให้ถูกต้อง",
+        "error_description_EN": "Please specify correctly phone number."
+    },
+    {
+        "error_code": "ERR_CS_00337",
+        "error_description_TH": "หมายเลขทะเบียนรถ {2} ผูกกับชำระ {5} ใน Line OA แล้ว",
+        "error_description_EN": "Vehicle registration number {2} has been tied to {5} paid in Line OA."
+    },
+    {
+        "error_code": "ERR_CS_00338",
+        "error_description_TH": "ไม่สามารถเพิ่มข้อมูลบัตร {5} ได้มากกว่า 1 รายการ",
+        "error_description_EN": "System not allow to add {5} card more than 1."
+    },
+    {
+        "error_code": "ERR_CS_00339",
+        "error_description_TH": "กรุณาระบุที่อยู่ปัจจุบัน และ ที่อยู่ที่ติดต่อได้ ",
+        "error_description_EN": "Please provide your current address and contact address."
+    },
+    {
+        "error_code": "ERR_CS_00340",
+        "error_description_TH": "หมายเลขทะเบียนรถ {2} เป็นสมาชิก Line OA ด้วยสมาชิกท่านอื่นแล้ว",
+        "error_description_EN": "License Plate no. {2} already a Line OA member."
+    },
+    {
+        "error_code": "ERR_CS_00341",
+        "error_description_TH": "ชาวต่างชาติไม่สามารถสมัครสมาชิก {5} ได้",
+        "error_description_EN": "Foreign nationals cannot apply for {5} membership."
+    },
+    {
+        "error_code": "ERR_CS_00344",
+        "error_description_TH": "ลงทะเบียนไม่สำเร็จ เนื่องจากไม่พบหมายเลขบัตรสมาชิก",
+        "error_description_EN": "Failed to register because the Account Id is not found"
+    },
+    {
+        "error_code": "ERR_CS_00349",
+        "error_description_TH": "ตรวจพบ Tag ค้างในระบบ",
+        "error_description_EN": "Detected leftover tag in the system"
+    },
+    {
+        "error_code": "ERR_EP_R0000",
+        "error_description_TH": "get from response api ",
+        "error_description_EN": "get from response api "
+    },
+    {
+        "error_code": "ERR_MEP_R0000",
+        "error_description_TH": "get from response api ",
+        "error_description_EN": "get from response api "
+    },
+    {
+        "error_code": "WRN_CS_00004",
+        "error_description_TH": "หมายเลขทะเบียน {2} ต้องการเปลี่ยนรูปแบบการชำระเงินผ่าน Easy Pass  ใช่หรือไหม",
+        "error_description_EN": "Want to change the format via Easy Pass?"
+    },
+    {
+        "error_code": "WRN_CS_00005",
+        "error_description_TH": "หมายเลขทะเบียน {2} ต้องการเปลี่ยนช่องทางการสมัครสมาชิก จาก Line OA เป็นสมาชิก M-Flow ใช่หรือไหม",
+        "error_description_EN": "License Plate no. {2} want to change the subscription channel from Line OA to M-Flow member?"
+    },
+    {
+        "error_code": "ERR_CS_00350",
+        "error_description_TH": "ข้อมูลหมายเลข Easy Pass ถูกใช้แล้วที่ Line OA หากต้องการใช้งานบัตรนี้ กรุณาลบข้อมูลบัตรที่ Line OA M-Flow",
+        "error_description_EN": "The Easy Pass number is already in use on the M-Flow Line OA. To use this card, please delete the card information from the M-Flow Line OA"
+    },
+    {
+        "error_code": "ERR_AUTH_0001",
+        "error_description_TH": "กรุณาระบุข้อมูล username ของผู้ใช้งาน",
+        "error_description_EN": "Please enter your username."
+    },
+    {
+        "error_code": "ERR_AUTH_0002",
+        "error_description_TH": "กรุณาระบุข้อมูล password ของผู้ใช้งาน",
+        "error_description_EN": "Please enter your password."
+    },
+    {
+        "error_code": "ERR_AUTH_0003",
+        "error_description_TH": "ข้อมูล Transaction Id บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Transaction Id on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_0004",
+        "error_description_TH": "ข้อมูล Request Date บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Request date on the header is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_0005",
+        "error_description_TH": "ข้อมูล Source บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Source on the header is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_0006",
+        "error_description_TH": "ข้อมูล Language บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Language on the header is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_0007",
+        "error_description_TH": "ข้อมูล Type บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Type on the header is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_0009",
+        "error_description_TH": "ข้อมูล System บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The System on the header is invalid."
+    },
+    {
+        "error_code": "ERR_AUTH_9999",
+        "error_description_TH": "ดำเนินการไม่สำเร็จ",
+        "error_description_EN": "The can not  proceed."
+    },
+    {
+        "error_code": "ERR_AUTH_0010",
+        "error_description_TH": "ไม่สามารถเข้าใช้งานระบบได้ กรุณาตรวจสอบ username หรือ password ให้ถูกต้อง",
+        "error_description_EN": "Login Failed, Please check username and password."
+    },
+    {
+        "error_code": "INFO_AUTH_0000",
+        "error_description_TH": "ระบบดำเนินการสำเร็จเรียบร้อยแล้ว",
+        "error_description_EN": "The systems have already proceeded success."
+    },
+    {
+        "error_code": "ERR_AUTH_0015",
+        "error_description_TH": "ไม่พบ JWT ในระบบ",
+        "error_description_EN": "Not found JWT in the system."
+    },
+    {
+        "error_code": "ERR_CS_00002",
+        "error_description_TH": "ข้อมูล Transaction Id บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The Transaction Id on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00003",
+        "error_description_TH": "Request Date บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The request date on the header is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00004",
+        "error_description_TH": "Source บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The data on  the source is not correct."
+    },
+    {
+        "error_code": "ERR_CS_00005",
+        "error_description_TH": "Language บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The language on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00124",
+        "error_description_TH": "กรุณาระบุข้อมูล Access Key บน Header",
+        "error_description_EN": "Please enter the Access Key on the Header."
+    },
+    {
+        "error_code": "ERR_CS_00150",
+        "error_description_TH": "System บน Header Request ไม่ถูกต้อง",
+        "error_description_EN": "The System on the Header Request is invalid."
+    },
+    {
+        "error_code": "ERR_CS_00021",
+        "error_description_TH": "ข้อมูลเพศของผู้ใช้งานไม่ถูกต้อง",
+        "error_description_EN": "User gender is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00022",
+        "error_description_TH": "ข้อมูลเลขบัตรประจำตัวประชาชนของผู้ใช้งานไม่ถูกต้อง",
+        "error_description_EN": "The user identity card number is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00024",
+        "error_description_TH": "กรุณาระบุข้อมูลเลขที่หนังสือเดินทางระหว่างประเทศของผู้ใช้งาน",
+        "error_description_EN": "Please enter the passport number."
+    },
+    {
+        "error_code": "ERR_CS_00025",
+        "error_description_TH": "กรุณาระบุข้อมูลเลขที่จำทะเบียน 13 หลัก DBD ของผุ้ใช้งาน",
+        "error_description_EN": "Please enter the number 13 digit DBD registration."
+    },
+    {
+        "error_code": "ERR_CS_00026",
+        "error_description_TH": "กรุณาระบุข้อมูลประเภทของลูกค้า",
+        "error_description_EN": "Please enter the customer type."
+    },
+    {
+        "error_code": "ERR_CS_00027",
+        "error_description_TH": "ข้อมูลประเภทของลูกค้าไม่ถูกต้อง",
+        "error_description_EN": "The customer type is incorrect."
+    },
+    {
+        "error_code": "ERR_CS_00210",
+        "error_description_TH": "กรุณาระบุข้อมูลเบอร์โทรศัพท์",
+        "error_description_EN": "Please provide your phone number."
+    },
+    {
+        "error_code": "ERR_CS_00324",
+        "error_description_TH": "หมายเลขโทรศัพท์ {3} เป็นสมาชิก M-Flow แล้ว แต่หมายเลข ID ไม่ตรงกัน",
+        "error_description_EN": "Mobile no. {3} already a M-Flow member but ID no. not match."
+    },
+    {
+        "error_code": "ERR_CS_00325",
+        "error_description_TH": "หมายเลข ID {0} เป็นสมาชิก M-Flow แล้ว แต่หมายเลขโทรศัพท์ {3} ไม่ตรงกัน",
+        "error_description_EN": "ID no. {0} already a M-Flow member but Mobile no. not match."
+    },
+    {
+        "error_code": "ERR_CS_00331",
+        "error_description_TH": "หมายเลขโทรศัพท์ {3} หมายเลข ID {0} อยู่ระหว่างตรวจสอบการเป็นสมาชิก M-Flow",
+        "error_description_EN": "Mobile no.{3} ID no.{0} under review a membership."
+    },
+    {
+        "error_code": "ERR_CS_00236",
+        "error_description_TH": "กรุณาระบุข้อมูลชื่อสาขา",
+        "error_description_EN": "Please provide the branch name."
+    },
+    {
+        "error_code": "WRN_CS_00007",
+        "error_description_TH": "หมายเลขโทรศัพท์ {3} หมายเลข ID {0} เป็นสมาชิก M-Flow แล้ว จะดำเนินการต่อ ใช่หรือไหม",
+        "error_description_EN": "Mobile no.{3} ID no.{0} already a M-Flow member you continue?"
+    },
+    {
+        "error_code": "WRN_CS_00008",
+        "error_description_TH": "สามารถลงทะเบียน M-Flow ได้",
+        "error_description_EN": "M-Flow can be registered."
+    }
+]

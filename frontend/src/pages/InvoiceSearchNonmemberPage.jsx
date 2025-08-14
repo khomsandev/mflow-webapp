@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import provincesData from "../data/provinces.json";
+// import provincesData from "../data/provinces.json";
+import { API_BASE_URL } from '../config';
 
 export default function InvoiceSearchNonmemberPage() {
   const navigate = useNavigate();
@@ -18,10 +19,23 @@ export default function InvoiceSearchNonmemberPage() {
   const [loadingProvinces, setLoadingProvinces] = useState(true);
 
   // *** Function สำหรับดึงข้อมูลจังหวัดจาก Backend ***
-    useEffect(() => {
-    setProvinceOptions(provincesData);
-    setLoadingProvinces(false);
-  }, []);
+  //   useEffect(() => {
+  //   setProvinceOptions(provincesData);
+  //   setLoadingProvinces(false);
+  // }, []);
+
+  useEffect(() => {
+      fetch(`${API_BASE_URL}/provinces`) // URL backend FastAPI
+        .then((res) => res.json())
+        .then((data) => {
+          setProvinceOptions(data);
+          setLoadingProvinces(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching provinces:", err);
+          setLoadingProvinces(false);
+        });
+    }, []);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
