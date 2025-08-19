@@ -1,7 +1,26 @@
+# FastAPI + ASGI server
 fastapi==0.110.0
 uvicorn[standard]==0.29.0
-pydantic==2.7.1
+
+# Database drivers
+psycopg2-binary==2.9.9     # PostgreSQL stable
+oracledb==2.2.1            # Oracle driver stable
+
+# Security & Auth
+bcrypt==4.1.2
+PyJWT==2.8.0
+
+# Config & Environment
 python-dotenv==1.0.1
-oracledb==2.2.0
-xlsxwriter==3.2.0
-requests==2.32.3
+
+# Excel export
+XlsxWriter==3.1.9
+
+# HTTP requests
+requests==2.31.0
+
+# Utility
+python-multipart==0.0.9
+
+# Data validation
+pydantic==1.10.15

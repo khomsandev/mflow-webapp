@@ -1,7 +1,11 @@
 fastapi
 uvicorn
-pydantic
-python-dotenv
+psycopg2
 oracledb
-xlsxwriter
+bcrypt
+PyJWT
+python-dotenv
+XlsxWriter
 requests
+python-multipart
+pydantic

@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
 import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import TranRoutes from "./routes/TranRoutes";
 import RefCheckerRoutes from "./routes/RefCheckerRoutes";
 import CustomerVipRoutes from "./routes/CustomerVipRoutes";
@@ -10,53 +13,34 @@ import TranDetailRoutes from "./routes/TranDetailRoutes";
 import ReconcileRoutes from "./routes/ReconcileRoutes";
 import ImgRegisRoutes from "./routes/ImgRegisRoutes";
 import ErrorCodeRoutes from "./routes/ErrorCodeRoutes";
+import RegisterRoutes from "./routes/RegisterRoutes";
 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/login" element={<LoginPage onLogin={() => window.location.href = "/"} />} />
+        {RegisterRoutes}
 
-          {/* แดชบอร์ด */}
-          {/* 🔹 Dashboard and other pages */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<DashboardPage />} />
-
-          {/* ตรวจสอบรายการผ่านทาง */}
-          {/* 🔹 Tran search routes */}
-          {TranRoutes }
-
-          {/* ตรวจสอบประวัติการชำระเงิน */}
-          {/* 🔹 Reconcile routes */}
-          {ReconcileRoutes }
-          
-          {/* ตรวจสอบการชำระเงิน */}
-          {/* 🔹 RefChecker routes */}
-          {RefCheckerRoutes }
-
-          {/* CustomerVIP */}
-          {CustomerVipRoutes }
-
-          {/* ค้นหาใบแจ้งหนี้ */}
-          {/* 🔹 Invoice search routes */}
-          {InvoiceRoutes }
-
-          {/* ค้นหาใบเสร็จรับเงิน */}
-          {/* 🔹 receipt search routes */}
-          {ReceiptRoutes }
-
-          {/* ค้นหา Transection Detail */}
-          {/* 🔹 tran detail search routes */}
-          {TranDetailRoutes }
-
-          {/* ค้นหารูปภาพการลงทะเบียน */}
-          {/* 🔹 Image registration search routes */}
-          {ImgRegisRoutes }
-
-          {/* ค้นหา Error Code */}
-          {/* 🔹 Error code search routes */}
-          {ErrorCodeRoutes }
-
+          {TranRoutes}
+          {ReconcileRoutes}
+          {RefCheckerRoutes}
+          {CustomerVipRoutes}
+          {InvoiceRoutes}
+          {ReceiptRoutes}
+          {TranDetailRoutes}
+          {ImgRegisRoutes}
+          {ErrorCodeRoutes}
         </Route>
       </Routes>
     </Router>

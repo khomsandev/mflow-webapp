@@ -1,5 +1,10 @@
 import io, os, zipfile, requests, uuid, xlsxwriter, time
-from fastapi import FastAPI, Query, Body, HTTPException
+from fastapi import FastAPI, Query, Body, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
+import psycopg2
+import bcrypt
+import jwt
+from datetime import datetime, timedelta
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
@@ -18,8 +23,6 @@ from db import fetch_tran_details
 from db import search_car
 from db import search_images_register
 from db import get_pg_connection
-
-
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
@@ -49,11 +52,97 @@ def cleanup_temp_folder():
     for f in os.listdir(temp_dir):
         path = os.path.join(temp_dir, f)
         if os.path.isfile(path) and f.endswith(".xlsx"):
-            if now - os.path.getmtime(path) > 10:  # ใส่เป็นวินาที
+            if now - os.path.getmtime(path) > 300:  # ใส่เป็นวินาที
                 os.remove(path)
 
-
 app.include_router(reconcile.router)
+
+
+## Authentication and User Management ##
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+
+@app.post("/register")
+def register_user(req: RegisterRequest):
+    try:
+        conn = get_pg_connection()
+        cur = conn.cursor()
+
+        # เช็คว่า username ซ้ำหรือไม่
+        cur.execute("SELECT id FROM users WHERE username = %s", (req.username,))
+        if cur.fetchone():
+            raise HTTPException(status_code=400, detail="Username นี้มีอยู่แล้ว กรุณาเลือกชื่อผู้ใช้ใหม่")
+
+        # เข้ารหัส password
+        hashed_pw = bcrypt.hashpw(req.password.encode("utf-8"), bcrypt.gensalt())
+        hashed_pw = hashed_pw.decode("utf-8")  # แปลงเป็น string ก่อน insert
+
+        # Insert user
+        cur.execute(
+            "INSERT INTO users (username, password, name) VALUES (%s, %s, %s)",
+            (req.username, hashed_pw, req.name)
+        )
+        conn.commit()
+
+        return {"message": "User registered successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+@app.post("/login")
+def login(data: LoginRequest):
+    conn = get_pg_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, username, password, name FROM users WHERE username = %s",
+        (data.username,),
+    )
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    user_id, username, hashed_password, name = user
+
+    if not bcrypt.checkpw(data.password.encode("utf-8"), hashed_password.encode("utf-8")):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    token_data = {
+        "sub": username,
+        "name": name,
+        "exp": datetime.utcnow() + timedelta(hours=1)
+    }
+    token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
+
+    return {"access_token": token, "token_type": "bearer", "name": name}
+
+@app.get("/me")
+def read_me(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return {"username": payload["sub"], "name": payload["name"]}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+## End of Authentication and User Management ##
 
 @app.get("/error-code")
 def get_error_code(file: str = Query(...), code: str = Query(...)):
