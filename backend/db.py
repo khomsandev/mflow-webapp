@@ -552,75 +552,76 @@ def fetch_tran_details(ids: List[str], id_type: str):
         
         sql = f"""
         WITH combined_invoices AS (
-        SELECT 
-            mi2.REF_TRANSACTION_ID,
-            mi1.TRANSACTION_ID,
-            mi.INVOICE_NO,       
-            TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
-            mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
-            V.DESCRIPTION AS "จังหวัด",  
-            TO_CHAR(ADD_MONTHS(mi1.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันเวลาผ่านทาง",   
-            TO_CHAR(mi1.TRANSACTION_DATE, 'HH24:MI:SS') AS "เวลาผ่านทาง",       
-            mi1.FEE_AMOUNT,   
-            CASE 
-                WHEN mi.INVOICE_NO_REF IS NOT NULL THEN 0
-                ELSE 0
-            END AS "รายการค่าปรับ x2",
-            CASE 
-                WHEN mi.INVOICE_NO_REF IS NOT NULL THEN mi.FEE_AMOUNT * 10
-                ELSE 0
-            END AS "รายการค่าปรับ x10",mi.TOTAL_AMOUNT , mi.STATUS,  
-            'NONMEMBER' AS "สถานะสมาชิก",     
-            CASE 
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0001' THEN 'C1'
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0002' THEN 'C2'
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0003' THEN 'C3'
-                ELSE mi2.VEHICLE_WHEEL_CODE
-            END AS "ประเภทรถ",   
-            P.NAME AS "ด่าน",     
-            mi.DISCOUNT, 
-            mi.PAYMENT_CHANNEL AS "ช่องทางชำระ" ,'NONMEMBERBILLTIME' AS "รูปแบบการชำระ" 
-        FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER mi
-        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER mi1 ON mi.INVOICE_NO = mi1.INVOICE_NO
-        LEFT JOIN NONMEMBER_SERVICE.MF_NONM_TRANSACTION mi2 ON mi1.TRANSACTION_ID = mi2.TRANSACTION_ID
-        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON mi.PROVINCE = V.CODE
-        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON mi1.PLAZA_CODE = P.CODE 
-        WHERE mi.INVOICE_TYPE IN (0,1,2) AND mi.CREATE_CHANNEL != 'Dispute Service'
-        UNION ALL
-        SELECT 
-            mi2.REF_TRANSACTION_ID,
-            mi1.TRANSACTION_ID,
-            mi.INVOICE_NO,     
-            TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
-            mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
-            V.DESCRIPTION AS "จังหวัด",  
-            TO_CHAR(ADD_MONTHS(mi1.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันเวลาผ่านทาง",   
-            TO_CHAR(mi1.TRANSACTION_DATE, 'HH24:MI:SS') AS "เวลาผ่านทาง",       
-            mi1.FEE_AMOUNT,   
-            CASE 
-                WHEN mi.INVOICE_NO_REF IS NOT NULL THEN mi.FEE_AMOUNT * 2
-                ELSE 0
-            END AS "รายการค่าปรับ x2",
-            CASE 
-                WHEN mi.INVOICE_NO_REF IS NOT NULL THEN 0
-                ELSE 0
-            END AS "รายการค่าปรับ x10", mi.TOTAL_AMOUNT ,mi.STATUS,
-            'MEMBER' AS MEMBER_TYPE,    
-            CASE 
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0001' THEN 'C1'
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0002' THEN 'C2'
-                WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0003' THEN 'C3'
-                ELSE mi2.VEHICLE_WHEEL_CODE
-            END AS "ประเภทรถ",   
-            P.NAME AS "ด่าน",     
-            mi.DISCOUNT, 
-            mi.PAYMENT_CHANNEL AS "ช่องทางชำระ",mi.INVOICE_CHANNEL  AS "รูปแบบการชำระ" 
-        FROM INVOICE_SERVICE.MF_INVOICE mi
-        LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL mi1 ON mi.INVOICE_NO = mi1.INVOICE_NO
-        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MEMBER_TRANSACTION mi2 ON mi1.TRANSACTION_ID = mi2.TRANSACTION_ID
-        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON mi.PROVINCE = V.CODE
-        LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON mi1.PLAZA_CODE = P.CODE
-        WHERE mi.INVOICE_TYPE IN (0,1,2) AND mi.CREATE_CHANNEL != 'Dispute Service'
+            SELECT 
+                mi2.REF_TRANSACTION_ID,
+                mi1.TRANSACTION_ID,
+                mi.INVOICE_NO,       
+                TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",
+                TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",
+                TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
+                mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
+                V.DESCRIPTION AS "จังหวัด",  
+                TO_CHAR(ADD_MONTHS(mi1.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันเวลาผ่านทาง",   
+                TO_CHAR(mi1.TRANSACTION_DATE, 'HH24:MI:SS') AS "เวลาผ่านทาง",       
+                mi1.FEE_AMOUNT,   
+                0 AS "รายการค่าปรับ x2",                -- ❌ Nonmember ไม่มี COLLECTION_AMOUNT
+                CASE 
+                    WHEN mi.INVOICE_NO_REF IS NOT NULL THEN mi.FEE_AMOUNT * 10
+                    ELSE 0
+                END AS "รายการค่าปรับ x10",
+                mi.TOTAL_AMOUNT, 
+                mi.STATUS,  
+                'NONMEMBER' AS "สถานะสมาชิก",     
+                CASE 
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0001' THEN 'C1'
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0002' THEN 'C2'
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0003' THEN 'C3'
+                    ELSE mi2.VEHICLE_WHEEL_CODE
+                END AS "ประเภทรถ",   
+                P.NAME AS "ด่าน",     
+                mi.DISCOUNT, 
+                mi.PAYMENT_CHANNEL AS "ช่องทางชำระ",
+                'NONMEMBERBILLTIME' AS "รูปแบบการชำระ" 
+            FROM INVOICE_SERVICE.MF_INVOICE_NONMEMBER mi
+            LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL_NONMEMBER mi1 ON mi.INVOICE_NO = mi1.INVOICE_NO
+            LEFT JOIN NONMEMBER_SERVICE.MF_NONM_TRANSACTION mi2 ON mi1.TRANSACTION_ID = mi2.TRANSACTION_ID
+            LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON mi.PROVINCE = V.CODE
+            LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON mi1.PLAZA_CODE = P.CODE 
+            WHERE mi.INVOICE_TYPE IN (0,1,2) AND mi.CREATE_CHANNEL != 'Dispute Service'
+            UNION ALL
+            SELECT 
+                mi2.REF_TRANSACTION_ID,
+                mi1.TRANSACTION_ID,
+                mi.INVOICE_NO,     
+                TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'MM/YYYY') AS "วันที่รับชำระเงิน",
+                TO_CHAR(ADD_MONTHS(mi.PAYMENT_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันที่รับชำระเงิน1",
+                TO_CHAR(mi.PAYMENT_DATE, 'HH24:MI:SS') AS "เวลาที่ชำระ",
+                mi.PLATE1 || ' ' || mi.PLATE2 AS "ป้ายทะเบียน",
+                V.DESCRIPTION AS "จังหวัด",  
+                TO_CHAR(ADD_MONTHS(mi1.TRANSACTION_DATE, 543 * 12), 'DD/MM/YYYY') AS "วันเวลาผ่านทาง",   
+                TO_CHAR(mi1.TRANSACTION_DATE, 'HH24:MI:SS') AS "เวลาผ่านทาง",       
+                mi1.FEE_AMOUNT,   
+                mi1.COLLECTION_AMOUNT AS "รายการค่าปรับ x2",   -- ✅ Member ใช้ COLLECTION_AMOUNT
+                0 AS "รายการค่าปรับ x10",
+                mi.TOTAL_AMOUNT,
+                mi.STATUS,
+                'MEMBER' AS "สถานะสมาชิก",    
+                CASE 
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0001' THEN 'C1'
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0002' THEN 'C2'
+                    WHEN mi2.VEHICLE_WHEEL_CODE = 'VWHEL0003' THEN 'C3'
+                    ELSE mi2.VEHICLE_WHEEL_CODE
+                END AS "ประเภทรถ",   
+                P.NAME AS "ด่าน",     
+                mi.DISCOUNT, 
+                mi.PAYMENT_CHANNEL AS "ช่องทางชำระ",
+                mi.INVOICE_CHANNEL  AS "รูปแบบการชำระ" 
+            FROM INVOICE_SERVICE.MF_INVOICE mi
+            LEFT JOIN INVOICE_SERVICE.MF_INVOICE_DETAIL mi1 ON mi.INVOICE_NO = mi1.INVOICE_NO
+            LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MEMBER_TRANSACTION mi2 ON mi1.TRANSACTION_ID = mi2.TRANSACTION_ID
+            LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_VEHICLE_OFFICE V ON mi.PROVINCE = V.CODE
+            LEFT JOIN CUSTOMER_SERVICE.MF_CUST_MASTER_PLAZA P ON mi1.PLAZA_CODE = P.CODE
+            WHERE mi.INVOICE_TYPE IN (0,1,2) AND mi.CREATE_CHANNEL != 'Dispute Service'
         )
         SELECT DISTINCT * FROM combined_invoices
         WHERE {id_type} IN ({placeholders})
