@@ -1,17 +1,27 @@
-// pages/CarBalancePage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Car } from "lucide-react";
+import { API_BASE_URL } from '../config';
+
 
 export default function CarBalancePage() {
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const companies = [
-    { customer_id: "C20220526214376602", name: "บริษัท เวิลด์คลาสเรนท์อะคาร์ จำกัด" },
-    { customer_id: "C20220324213075353", name: "บริษัท ไทย วี.พี.คอร์ปอเรชั่น จำกัด" },
-    { customer_id: "C20220525214372290", name: "บริษัท เวิลด์เบสท์ คอร์ปอเรชั่น จำกัด" },
-  ];
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/companies`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCompanies(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching companies:", err);
+        setLoading(false);
+      });
+  }, []);
 
   const handleSearch = () => {
     if (!selectedCustomerId) {
@@ -32,18 +42,22 @@ export default function CarBalancePage() {
       <label className="block text-sm font-semibold text-gray-700 mb-2">
         เลือกบริษัท
       </label>
-      <select
-        className="w-full p-2 border rounded mb-4"
-        value={selectedCustomerId}
-        onChange={(e) => setSelectedCustomerId(e.target.value)}
-      >
-        <option value="">-- เลือกบริษัท --</option>
-        {companies.map((company) => (
-          <option key={company.customer_id} value={company.customer_id}>
-            {`${company.customer_id} | ${company.name}`}
-          </option>
-        ))}
-      </select>
+      {loading ? (
+        <p className="text-gray-500">กำลังโหลด...</p>
+      ) : (
+        <select
+          className="w-full p-2 border rounded mb-4"
+          value={selectedCustomerId}
+          onChange={(e) => setSelectedCustomerId(e.target.value)}
+        >
+          <option value="">-- เลือกบริษัท --</option>
+          {companies.map((company) => (
+            <option key={company.customer_id} value={company.customer_id}>
+              {`${company.customer_id} | ${company.name}`}
+            </option>
+          ))}
+        </select>
+      )}
 
       <button
         onClick={handleSearch}

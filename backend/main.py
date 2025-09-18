@@ -71,6 +71,21 @@ class RegisterRequest(BaseModel):
     password: str
     name: str
 
+@app.get("/companies")
+def get_companies():
+    conn = get_pg_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT customer_id, name 
+        FROM public.customer_vip
+        ORDER BY name
+    """)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return [{"customer_id": r[0], "name": r[1]} for r in rows]
+
 @app.post("/register")
 def register_user(req: RegisterRequest):
     try:
