@@ -706,6 +706,7 @@ def search_images_register(car_id, customer_id):
     rows_img_car = cursor.fetchall()
     columns_img_car = [col[0].lower() for col in cursor.description]
 
+
     # ข้อมูล ผชท
     query_customer = """
         SELECT * FROM CUSTOMER_SERVICE.MF_CUST_INFO mci WHERE CUSTOMER_ID = :customer_id
@@ -720,11 +721,9 @@ def search_images_register(car_id, customer_id):
     
     # รูปภาพ ผชท 
     query_img_customer = """
-        SELECT FILE_ID,
-            TYPE,
-            NVL(FILE_TYPE, 'jpg') AS FILE_TYPE 
+        SELECT FILE_ID, TYPE, NVL(FILE_TYPE, 'jpg') AS FILE_TYPE 
         FROM CUSTOMER_SERVICE.MF_CUST_INFO_IMAGES 
-        WHERE DELETE_FLAG = 0
+        WHERE DELETE_FLAG = 0 
     """
     params_img_customer = {}
     if id_customer:
